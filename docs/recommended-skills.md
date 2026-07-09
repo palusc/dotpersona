@@ -31,8 +31,8 @@ its own source, typically by dropping its folder into `~/.claude/skills/<name>/`
 picks it up automatically on the next `/persona` invocation.
 
 - **Bundled skills** are already present in a current Claude Code install — nothing to do.
-- **Community skills** live in their authors' own repos. Search for the skill name, install from the
-  original source, and star *that* repo too — the ecosystem runs on it.
+- **Community skills** live in their authors' own repos. Search for the skill name and install from the
+  original source.
 
 ## A note to skill authors
 

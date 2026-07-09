@@ -1,6 +1,6 @@
 # The `PERSONA.md` schema
 
-Every persona is a single Markdown file in `personas/<slug>.md`. The consistency of this
+Every persona is a single Markdown file in `custom-personas/<slug>.md` (or `skills/<slug>/SKILL.md` for official ones). The consistency of this
 schema is what makes the library feel like *one system* instead of a pile of prompts.
 Match it exactly when you write a new persona.
 

@@ -1,18 +1,27 @@
 #!/usr/bin/env bash
-# Persona installer — makes /persona available in Claude Code.
+# Persona installer — makes /persona and all persona skills available in Claude Code.
 #
-#   ./install.sh            symlink this repo into ~/.claude/skills/persona
+#   ./install.sh            symlink all skills into ~/.claude/skills
 #                           (recommended: `git pull` then instantly up to date, and
 #                            `/persona update` works)
 #   ./install.sh --copy     copy instead of symlink (no git updates)
 #   ./install.sh --update   git pull the repo and report what's new
-#   ./install.sh --uninstall remove the /persona skill link
+#   ./install.sh --uninstall remove all installed persona skill links
 #
 set -euo pipefail
 
+# Get the directory of this script, handling cases where it is run via stdin/curl
+if [[ -z "${BASH_SOURCE[0]:-}" ]]; then
+  echo "✗ install.sh cannot be run directly via curl | bash." >&2
+  echo "  Please clone the repository first, then run install.sh from the repository root:" >&2
+  echo "    git clone https://github.com/palusc/dotpersona.git" >&2
+  echo "    cd dotpersona" >&2
+  echo "    ./install.sh" >&2
+  exit 1
+fi
+
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SKILLS_DIR="${CLAUDE_SKILLS_DIR:-$HOME/.claude/skills}"
-TARGET="$SKILLS_DIR/persona"
 MODE="symlink"
 
 for arg in "$@"; do
@@ -26,8 +35,8 @@ for arg in "$@"; do
 done
 
 # Sanity: are we actually in the repo?
-if [[ ! -f "$REPO_DIR/SKILL.md" || ! -d "$REPO_DIR/personas" ]]; then
-  echo "✗ This doesn't look like the dotpersona repo (no SKILL.md / personas/). Run install.sh from the repo root." >&2
+if [[ ! -f "$REPO_DIR/skills/persona/SKILL.md" || ! -d "$REPO_DIR/skills" ]]; then
+  echo "✗ This doesn't look like the dotpersona repo (no skills/persona/SKILL.md). Run install.sh from the repo root." >&2
   exit 1
 fi
 
@@ -42,7 +51,7 @@ case "$MODE" in
         echo "✓ Already up to date ($after)."
       else
         echo "✓ Updated $before → $after. New personas & changes:"
-        git -C "$REPO_DIR" --no-pager log --oneline "$before..$after" -- personas/ CHANGELOG.md || true
+        git -C "$REPO_DIR" --no-pager log --oneline "$before..$after" -- skills/ CHANGELOG.md || true
         echo "  See CHANGELOG.md for the full list. In Claude Code, run: /persona list"
       fi
     else
@@ -52,38 +61,49 @@ case "$MODE" in
     exit 0
     ;;
   uninstall)
-    if [[ -L "$TARGET" || -e "$TARGET" ]]; then
-      rm -rf "$TARGET"; echo "✓ Removed $TARGET"
-    else
-      echo "Nothing to remove at $TARGET"
-    fi
+    for skill_path in "$REPO_DIR/skills"/*; do
+      if [[ -d "$skill_path" ]]; then
+        skill_name="$(basename "$skill_path")"
+        TARGET="$SKILLS_DIR/$skill_name"
+        if [[ -L "$TARGET" || -e "$TARGET" ]]; then
+          rm -rf "$TARGET"
+          echo "✓ Removed $TARGET"
+        fi
+      fi
+    done
     exit 0
     ;;
 esac
 
 mkdir -p "$SKILLS_DIR"
+mkdir -p "$REPO_DIR/custom-personas"
 
-# Back up anything already there (unless it's our own symlink).
-if [[ -e "$TARGET" || -L "$TARGET" ]]; then
-  if [[ -L "$TARGET" && "$(readlink "$TARGET")" == "$REPO_DIR" ]]; then
-    echo "✓ Already linked: $TARGET → $REPO_DIR"
-    echo "  Run '/persona' in Claude Code to start."
-    exit 0
+# Iterate over all skills inside skills/ and install them
+for skill_path in "$REPO_DIR/skills"/*; do
+  if [[ -d "$skill_path" ]]; then
+    skill_name="$(basename "$skill_path")"
+    TARGET="$SKILLS_DIR/$skill_name"
+    
+    # Back up anything already there (unless it's our own symlink/copy).
+    if [[ -e "$TARGET" || -L "$TARGET" ]]; then
+      if [[ -L "$TARGET" && "$(readlink "$TARGET")" == "$skill_path" ]]; then
+        echo "✓ Already linked: $TARGET → $skill_path"
+        continue
+      fi
+      backup="$TARGET.backup.$$"
+      mv "$TARGET" "$backup"
+      echo "! Existing $TARGET moved to $backup"
+    fi
+
+    if [[ "$MODE" == "copy" ]]; then
+      cp -R "$skill_path" "$TARGET"
+      echo "✓ Copied $skill_name → $TARGET"
+    else
+      ln -s "$skill_path" "$TARGET"
+      echo "✓ Linked $TARGET → $skill_path"
+    fi
   fi
-  backup="$TARGET.backup.$$"
-  mv "$TARGET" "$backup"
-  echo "! Existing $TARGET moved to $backup"
-fi
-
-if [[ "$MODE" == "copy" ]]; then
-  cp -R "$REPO_DIR" "$TARGET"
-  rm -rf "$TARGET/.git"
-  echo "✓ Copied repo → $TARGET (no auto-updates; re-run install.sh after a manual pull)"
-else
-  ln -s "$REPO_DIR" "$TARGET"
-  echo "✓ Linked $TARGET → $REPO_DIR"
-  echo "  'git pull' in the repo (or './install.sh --update') keeps /persona current."
-fi
+done
 
 echo
 echo "Done. In Claude Code:"

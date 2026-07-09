@@ -9,8 +9,6 @@ a quality bar, and the skills to deliver. Summon the right expert for the job wi
 
 [![Validate](https://github.com/palusc/dotpersona/actions/workflows/validate.yml/badge.svg)](https://github.com/palusc/dotpersona/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Personas](https://img.shields.io/badge/experts-6%20and%20growing-8a2be2)](ROADMAP.md)
-[![Star to follow](https://img.shields.io/badge/★%20star-get%20new%20experts-yellow)](https://github.com/palusc/dotpersona)
 
 </div>
 
@@ -31,22 +29,25 @@ A **persona** is a *noun* — *The Architect*, *The Designer* — a whole profes
 design system first*, has taste with reasons, holds a quality bar, and knows which tool to reach
 for and when.
 
-> **The persona's mind lives in its `PERSONA.md`. Skills are its hands.**
+> **The persona's mind lives in its `SKILL.md`. Skills are its hands.**
 > If a skill isn't installed, the persona still thinks correctly and does the work by hand —
 > it degrades gracefully, it never breaks.
 
 That's the difference between handing someone a toolbox and hiring someone who knows the craft.
 
+### Why not just use a system prompt?
+While you can type these instructions into a system prompt by hand, it is hard to scale, share, and maintain. Persona solves this through **packaging**: it provides a versioned, routable, schema-validated repertoire of opinionated prompts that your team doesn't have to re-type, copy-paste, or construct from scratch for every new session.
+
 ## The roster
 
 | | Persona | Essence |
 |---|---|---|
-| 🏛️ | **[The Architect](personas/the-architect.md)** | Designs systems that survive contact with reality. |
-| 🎨 | **[The Designer](personas/the-designer.md)** | Understands the system before touching a pixel; ships taste, not decoration. |
-| 🚀 | **[The Shipper](personas/the-shipper.md)** | Momentum over ceremony — small, verified steps that reach production. |
-| 🔍 | **[The Auditor](personas/the-auditor.md)** | Assumes the code is guilty until proven correct; hunts the input that breaks it. |
-| 📚 | **[The Researcher](personas/the-researcher.md)** | Chases evidence, not vibes; separates what's known from what's guessed. |
-| ♟️ | **[The Strategist](personas/the-strategist.md)** | Turns a messy problem into one decision and a reason to believe it. |
+| 🏛️ | **[The Architect](skills/the-architect/SKILL.md)** | Designs systems that survive contact with reality. |
+| 🎨 | **[The Designer](skills/the-designer/SKILL.md)** | Understands the system before touching a pixel; ships taste, not decoration. |
+| 🚀 | **[The Shipper](skills/the-shipper/SKILL.md)** | Momentum over ceremony — small, verified steps that reach production. |
+| 🔍 | **[The Auditor](skills/the-auditor/SKILL.md)** | Assumes the code is guilty until proven correct; hunts the input that breaks it. |
+| 📚 | **[The Researcher](skills/the-researcher/SKILL.md)** | Chases evidence, not vibes; separates what's known from what's guessed. |
+| ♟️ | **[The Strategist](skills/the-strategist/SKILL.md)** | Turns a messy problem into one decision and a reason to believe it. |
 
 **More experts are hiring →** see the [Roadmap](ROADMAP.md). Domain leads (Backend, Frontend, Data),
 specialists (Growth, Copy, Legal) and more are on the way.
@@ -56,7 +57,7 @@ specialists (Growth, Copy, Legal) and more are on the way.
 ```bash
 git clone https://github.com/palusc/dotpersona.git
 cd dotpersona
-./install.sh          # symlinks /persona into ~/.claude/skills — `git pull` = instant updates
+./install.sh          # links each expert as a first-class skill into ~/.claude/skills
 ```
 
 That's it. Open Claude Code and type `/persona`.
@@ -70,7 +71,7 @@ That's it. Open Claude Code and type `/persona`.
 /persona designer           # summon a specific persona
 /persona architect design the billing schema   # summon AND start the task in-character
 /persona list               # see the whole roster
-/persona + auditor          # stack: keep your persona, consult The Auditor on security
+/persona + auditor          # stack: keep your primary, consult The Auditor on security
 /persona new                # forge your own expert (guided)
 /persona update             # pull the latest roster and see what's new
 /persona off                # back to plain Claude
@@ -81,24 +82,16 @@ You can also just say it: *"be a designer for this"*, *"put on your architect ha
 A persona is a **mode, not a costume** — it changes *how Claude decides and what it refuses to
 ship*, not just the tone.
 
-## ★ Star to grow your team
+## Keeping your team current
 
-Persona isn't a static download — it's a **team that keeps hiring**. Three streams of updates:
-
-1. **New experts ship as mini-releases** — star + watch to be told the moment one lands.
-2. **Existing personas sharpen** their method over time (versioned).
-3. **The engine improves** — better routing, stacking, forging.
-
-Every new persona is a [GitHub Release](https://github.com/palusc/dotpersona/releases). **Watch the
-repo** and your team grows itself. Inside Claude Code, `/persona update` pulls the latest and tells
-you who just joined.
+Persona is a **team that keeps hiring**. Inside Claude Code, `/persona update` runs `./install.sh --update` to pull the latest engine improvements, new experts, and versioned updates, then displays the changes.
 
 ## Build your own expert
 
-The best rosters are hired by the community. Creating a persona is one file:
+The best rosters are hired by the community. Creating a custom persona is one file:
 
 ```bash
-/persona new     # Persona Forge interviews you and writes personas/<slug>.md
+/persona new     # Persona Forge interviews you and writes custom-personas/<slug>.md
 ```
 
 …or copy [`templates/PERSONA.template.md`](templates/PERSONA.template.md) by hand. The only rule
@@ -117,6 +110,7 @@ and every persona works with **none** of them installed. Standalone, MIT, yours.
 ## Learn more
 
 - 🧠 [How it works](docs/how-it-works.md) — the architecture and mental model
+- 🧪 [Before/After transcript](docs/before-after.md) — see how /persona auditor catches bugs default Claude misses
 - 📐 [The `PERSONA.md` schema](docs/persona-schema.md) — the contract every persona follows
 - ✍️ [Creating a persona](docs/creating-a-persona.md) — a hands-on tutorial
 - 🗺️ [Roadmap](ROADMAP.md) · 📓 [Changelog](CHANGELOG.md) · 🤝 [Contributing](CONTRIBUTING.md)

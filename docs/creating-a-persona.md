@@ -23,7 +23,7 @@ The fastest path. Type `/persona new` and the Forge interviews you:
 5. **Definition of Done** — what it refuses to ship.
 6. **Voice** — how it talks.
 
-It asks only what it can't infer, then writes `personas/<slug>.md` from the template for you and
+It asks only what it can't infer, then writes `custom-personas/<slug>.md` from the template for you and
 offers to open a PR. Use this when you know the *role* but don't want to hand-shape the Markdown.
 
 ### 2. By hand from the template
@@ -31,7 +31,7 @@ offers to open a PR. Use this when you know the *role* but don't want to hand-sh
 More control, and honestly a good way to think it through. Copy the blank and fill it in:
 
 ```bash
-cp templates/PERSONA.template.md personas/the-copywriter.md
+cp templates/PERSONA.template.md custom-personas/the-copywriter.md
 ```
 
 The template ([`templates/PERSONA.template.md`](../templates/PERSONA.template.md)) has every
@@ -351,7 +351,7 @@ Made something good? Share it so it joins the roster for everyone.
 The flow is designed to be one file and one PR — see [`CONTRIBUTING.md`](../CONTRIBUTING.md) for the
 full checklist. In short:
 
-1. Your persona is a single `personas/<slug>.md` that matches the schema (this guide) exactly.
+1. Your persona is a single `custom-personas/<slug>.md` (or `skills/<slug>/SKILL.md` if submitting as an official skill) that matches the schema (this guide) exactly.
 2. Add a one-line entry to the roster and a `CHANGELOG.md` note.
 3. Open a PR. (The Forge offers to do this for you at the end of `/persona new`.)
 

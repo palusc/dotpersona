@@ -3,9 +3,9 @@ name: validate personas
 on:
   push:
     branches: [main]
-    paths: ['personas/**', 'scripts/**', '.github/workflows/validate.yml']
+    paths: ['skills/**', 'custom-personas/**', 'scripts/**', '.github/workflows/validate.yml']
   pull_request:
-    paths: ['personas/**', 'templates/**', 'scripts/**']
+    paths: ['skills/**', 'custom-personas/**', 'templates/**', 'scripts/**']
 
 jobs:
   schema:

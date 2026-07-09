@@ -6,7 +6,7 @@ The best rosters are hired by the community. Adding a persona is deliberately ti
 ## The 3-minute path
 
 1. **Fork** [`palusc/dotpersona`](https://github.com/palusc/dotpersona) and clone your fork.
-2. **Create** `personas/<slug>.md` from [`templates/PERSONA.template.md`](templates/PERSONA.template.md).
+2. **Create** `skills/<slug>/SKILL.md` from [`templates/PERSONA.template.md`](templates/PERSONA.template.md) (or write it to `custom-personas/<slug>.md` via `/persona new` and move it).
    Match the schema exactly — see [`docs/persona-schema.md`](docs/persona-schema.md).
    (Fastest way: run `/persona new` in Claude Code and let Persona Forge write it, then refine.)
 3. **Validate** locally: `bash scripts/validate-personas.sh` (CI runs the same check).

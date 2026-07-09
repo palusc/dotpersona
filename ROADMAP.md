@@ -1,7 +1,6 @@
 # Roadmap — the experts coming to your team
 
-Persona grows like a team that keeps hiring. **★ Star + Watch [`palusc/dotpersona`](https://github.com/palusc/dotpersona)**
-to get notified the moment a new expert ships — every persona is a mini-release.
+Persona grows like a team that keeps hiring. New experts ship regularly — every persona is a mini-release.
 
 This roadmap is a promise *and* an invitation: if you want one of these sooner, build it with
 `/persona new` and [open a PR](CONTRIBUTING.md). Your name goes on the persona.

@@ -1,8 +1,8 @@
 # How Persona works
 
 A mental model of the Persona system for a developer evaluating this repo. It describes the
-system as shipped: one skill engine (`SKILL.md`), a folder of persona definitions
-(`personas/*.md`), a schema (`docs/persona-schema.md`), and a template. There is no runtime,
+system as shipped: one skill engine (`skills/persona/SKILL.md`), a roster of persona definitions
+shipped as skills (`skills/*/SKILL.md`), a schema (`docs/persona-schema.md`), and a template. There is no runtime,
 no build step, and no code — the whole thing is Markdown that Claude reads and obeys.
 
 ---
@@ -15,21 +15,16 @@ A **skill** is a **verb**: a single capability Claude performs (`brainstorm`, `g
 thing; you ask it to *be* someone, and it then decides which verbs to reach for, in what
 order, to what quality bar.
 
-Two design commitments make this more than a system prompt:
+### Why Persona? The Packaging Thesis
 
-- **The mind lives in `PERSONA.md`; skills are hands.** A persona file carries the mindset
-  (`Identity`), the taste (`Operating Principles`), the repeatable process (`Method`), the
-  quality gate (`Definition of Done`), and the voice (`How I Communicate`). That is the mind.
-  Declared `skills:` are tools the hands reach for — accelerators, not organs.
+A single system prompt can achieve many of these goals, but it is hard to scale, share, and maintain. Persona's core thesis is **packaging**: it provides a versioned, routable, schema-validated repertoire of opinionated prompts that a team does not have to re-type, copy-paste, or construct from scratch for every new session. This packaging approach relies on two design commitments:
 
-- **Graceful degradation is a hard rule.** Because the mind is self-contained, a persona stays
-  fully functional even when *none* of its declared skills are installed. A missing skill is
-  non-fatal: the persona falls back to the embedded Method and does the work by hand. The
-  engine never tells the user to go install something before it will help
-  (`SKILL.md` → *Core rules*, *Skill provenance*).
+- **The mind lives in `SKILL.md` (or `PERSONA.md` for custom ones); skills are hands.** A persona file carries the mindset (`Identity`), the taste (`Operating Principles`), the repeatable process (`Method`), the quality gate (`Definition of Done`), and the voice (`How I Communicate`). That is the mind. Declared `skills:` are tools the hands reach for — accelerators, not organs.
+
+- **Graceful degradation is a hard rule.** Because the mind is self-contained, a persona stays fully functional even when *none* of its declared skills are installed. A missing skill is non-fatal: the persona falls back to the embedded Method and does the work by hand. The engine never tells the user to go install something before it will help.
 
 ```
-        PERSONA.md  =  the MIND  (identity · principles · method · DoD · voice)
+      persona/SKILL.md  =  the MIND  (identity · principles · method · DoD · voice)
              │
              │  reaches for ↓  (soft dependency — degrades gracefully)
              ▼
@@ -43,16 +38,16 @@ Two design commitments make this more than a system prompt:
 
 ## 2. Anatomy of a persona
 
-Every persona is one Markdown file, `personas/<slug>.md`, with YAML frontmatter plus a
+Every official persona is one Markdown file, `skills/<slug>/SKILL.md`, with YAML frontmatter plus a
 **fixed** section order. The full contract — every field, every heading, the rules for each —
 is specified in [`persona-schema.md`](./persona-schema.md) and exemplified by
-[`personas/the-designer.md`](../personas/the-designer.md). It is not duplicated here.
+[`skills/the-designer/SKILL.md`](../skills/the-designer/SKILL.md). It is not duplicated here.
 
 The one-paragraph version:
 
-- **Frontmatter**: `persona` (slug = filename), `name`, `essence` (roster one-liner),
+- **Frontmatter**: `persona` (slug = directory name), `name`, `essence` (roster one-liner),
   `version`, `author`, `skills:` (soft deps), `consults:` (other personas), `triggers:`
-  (routing words).
+  (routing words). As a skill, it also requires a `description:` key for the system's indexer.
 - **Body, in this order**: `Identity` → `Operating Principles` → `Method` →
   `Skills I Wield` (a *Skill / When I reach for it / If it's missing* table) →
   `Definition of Done` → `How I Communicate` → `Summon Me When / Not`.
@@ -65,13 +60,13 @@ personas are authored from [`templates/PERSONA.template.md`](../templates/PERSON
 
 ## 3. The lifecycle: invoke → resolve → adopt → operate → switch/stack/off
 
-This is the engine loop, matching `SKILL.md` exactly.
+This is the engine loop, matching `skills/persona/SKILL.md` exactly.
 
 ```mermaid
 stateDiagram-v2
     [*] --> Invoke: user types /persona …
     Invoke --> Resolve: parse input grammar
-    Resolve --> Adopt: fuzzy-match slug + read full PERSONA.md
+    Resolve --> Adopt: fuzzy-match slug + read full persona definition
     Adopt --> Operate: announce in one line, in voice
     Operate --> Operate: run Method phases, wield skills, gate on DoD
     Operate --> Adopt: /persona <other>   (switch: one-line handoff)
@@ -79,7 +74,7 @@ stateDiagram-v2
     Operate --> [*]: /persona off  (drop → default Claude)
 ```
 
-**Invoke** — parse the input grammar (`SKILL.md` → *How to invoke*):
+**Invoke** — parse the input grammar (`skills/persona/SKILL.md` → *How to invoke*):
 
 | Input | Action |
 |---|---|
@@ -88,23 +83,20 @@ stateDiagram-v2
 | `/persona <name> <task>` | Adopt **and immediately begin** the task in-character. |
 | `/persona list` | Print roster (name + essence). No adoption. |
 | `/persona new` | Launch **Persona Forge** to author a new file. |
-| `/persona update` | `git pull` the install, show what's new from `CHANGELOG.md`. |
+| `/persona update` | Run `./install.sh --update` and output the result. |
 | `/persona + <name>` | **Stack** `<name>` onto the current primary. |
 | `/persona off` | Drop the persona. |
 | "be a designer", "act as an architect" | Treated as `/persona <role>` by intent. |
 
-**Resolve** — build the roster by reading only the YAML frontmatter of every `personas/*.md`
-(`name`, `essence`, `triggers`) — never dump full files at this stage. Fuzzy-match the
-requested name to a file.
+**Resolve** — build the roster by reading only the YAML frontmatter of every `skills/*/SKILL.md` (except `persona`) and `custom-personas/*.md` (`name`, `essence`, `triggers`) — never dump full files at this stage. Fuzzy-match the requested name to a file.
 
-**Adopt** — the four-step ritual (`SKILL.md` → *Adopting a persona*):
-1. Read the **full** `PERSONA.md`; internalize Identity, Operating Principles, Method,
-   Definition of Done — these now **override** generic behavior.
+**Adopt** — the four-step ritual (`skills/persona/SKILL.md` → *Adopting a persona*):
+1. Read the **full** persona definition. Official ones are read using `view_file` with `IsSkillFile: true` so the system registers them as invoked skills (preserving them across context compaction). Custom ones use `IsSkillFile: false`. Internalize Identity, Operating Principles, Method, Definition of Done — these now **override** generic behavior.
 2. Check each declared skill for presence (§4) and note fallbacks.
 3. **Announce in ONE line, in the persona's voice** — no preamble, no menu.
 4. Operate as the persona until switched, stacked, or dropped.
 
-**Operate** — (`SKILL.md` → *Operating as a persona*): work the **Method phases in order**,
+**Operate** — (`skills/persona/SKILL.md` → *Operating as a persona*): work the **Method phases in order**,
 announcing transitions tersely; reach for declared skills **exactly where** `Skills I Wield`
 says; before claiming done, hold the work against the **Definition of Done** and fix or name
 any gap; speak in the persona's registered voice.
@@ -115,7 +107,7 @@ any gap; speak in the persona's registered voice.
 
 ## 4. Skill orchestration & graceful degradation
 
-Personas **reference skills by name; they never vendor them** (`SKILL.md` → *Skill
+Personas **reference skills by name; they never vendor them** (`skills/persona/SKILL.md` → *Skill
 provenance*). A persona declaring `dataviz` is a résumé line ("proficient in Figma"), not a
 copy of that skill's code. This repo ships no third-party skill bodies.
 
@@ -170,14 +162,10 @@ Two ways to move between personas, and the invariant **one persona speaks at a t
   second for that second's domain — e.g. *The Architect* stacking `+ the-auditor` to
   pressure-test a design for security. **Keep one voice** (the primary's) and fold the
   consultant's judgment in; stacking adds judgment, not a second narrator.
+  The primary's Definition of Done is binding, but the consultant's domain-specific requirements must be met as part of that judgment.
 
 Each persona's `consults:` list names the personas it naturally reaches for, and the engine
 honors it — so stacking is guided by the personas' own declared affinities rather than guessed.
-
-```
-switch:  [ Designer ] ──handoff──► [ Shipper ]          (one identity, replaced)
-stack:   [ Architect ] ◄─consults─ ( Auditor )          (one voice, judgment folded in)
-```
 
 ---
 
@@ -187,41 +175,37 @@ stack:   [ Architect ] ◄─consults─ ( Auditor )          (one voice, judgme
 
 ```
 persona/
-├── SKILL.md                      # the engine: invocation grammar, lifecycle, core rules
-├── personas/                     # the roster — source of truth, read at runtime
-│   ├── the-architect.md          # one file per persona (more ship over time)
-│   ├── the-designer.md
-│   ├── the-shipper.md
-│   ├── the-auditor.md
-│   ├── the-researcher.md
-│   └── the-strategist.md
+├── plugin.json                    # plugin manifest defining metadata and skills
+├── skills/                        # the first-class skills loaded by Claude Code
+│   ├── persona/
+│   │   └── SKILL.md               # the engine: invocation grammar, lifecycle, core rules
+│   ├── the-architect/
+│   │   └── SKILL.md               # one folder/file per persona (more ship over time)
+│   ├── the-designer/
+│   │   └── SKILL.md
+│   ├── the-shipper/
+│   │   └── SKILL.md
+│   ├── the-auditor/
+│   │   └── SKILL.md
+│   ├── the-researcher/
+│   │   └── SKILL.md
+│   └── the-strategist/
+│       └── SKILL.md
 ├── templates/
 │   └── PERSONA.template.md        # scaffold for /persona new
+├── custom-personas/               # user custom-created personas (added to .gitignore)
 └── docs/
-    ├── persona-schema.md          # the PERSONA.md contract
+    ├── persona-schema.md          # the PERSONA.md / SKILL.md contract
     └── how-it-works.md            # this document
 ```
 
-Note the **folder is the source of truth**: the engine always reads the live `personas/*.md`
-frontmatter at runtime rather than trusting any hard-coded list (`SKILL.md` → *Roster*). The
-Roster table in `SKILL.md` documents the shipped team, but disk is authoritative — six personas
-ship today, and users drop their own files into `personas/` to extend the team with zero engine
-changes.
+Note that the **disk is the source of truth**: the engine always reads the live `skills/*/SKILL.md`
+frontmatter and `custom-personas/*.md` at runtime rather than trusting any hard-coded list. Adding a persona
+file or folder automatically extends routing — zero engine changes.
 
 **Two resolution paths the engine relies on:**
 
-1. **Personas** resolve as `personas/*.md` **relative to `SKILL.md`** — sibling files. This is
-   why nothing needs a registry: to find a persona, read the folder next to the engine.
-2. **Declared skills** resolve globally via `~/.claude/skills/X/SKILL.md` existence or the
-   available-skills list (§4).
+1. **Personas** resolve as `skills/*/SKILL.md` and `custom-personas/*.md` **relative to `skills/persona/SKILL.md`** — sibling/parent files. This is why nothing needs a registry: to find a persona, read the folder next to the engine.
+2. **Declared skills** resolve globally via `~/.claude/skills/X/SKILL.md` existence or the available-skills list (§4).
 
-**How `/persona` becomes findable:** this repo *is* a Claude skill. Its `SKILL.md` frontmatter
-(`name: persona`, plus the `description` and its embedded triggers) is what makes the CLI route
-`/persona` — and phrases like "act as an architect" — to this engine. Installing therefore means
-making this directory discoverable as the skill named `persona`, i.e. placing (recommended:
-**symlinking**) the repo at `~/.claude/skills/persona/`. The symlink install matters for
-`/persona update`, which does `git -C <repo> pull --ff-only` to fetch new personas and engine
-improvements, then reports what changed from `CHANGELOG.md`; a plain copy can't self-update and
-falls back to re-running the installer. Because personas are siblings of `SKILL.md`, one install
-of the engine automatically finds every persona in the folder — the roster grows by adding files,
-not by wiring anything up.
+**How `/persona` becomes findable:** this repo *is* a Claude plugin. Installing means symlinking/copying each directory under `skills/` to `~/.claude/skills/`. The main `persona` skill is what makes the CLI route `/persona` — and phrases like "act as an architect" — to this engine. The symlink install matters for `/persona update`, which runs `./install.sh --update` to fetch the latest personas and engine improvements, then reports what changed from `CHANGELOG.md`; a plain copy can't self-update and falls back to re-running the installer. Because personas are siblings of the `persona` skill, the engine automatically finds every persona — the roster grows by adding files, not by wiring anything up. Custom personas are saved in `custom-personas/` which is ignored by Git, ensuring updates never conflict with user-authored experts. The engine confirms the environment by checking `BASH_SOURCE` to ensure it resolves paths relative to its installation location.

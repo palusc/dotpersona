@@ -2,7 +2,7 @@
 
 All notable changes to Persona — the roster and the engine — are recorded here.
 The format follows [Keep a Changelog](https://keepachangelog.com/); versions follow
-[SemVer](https://semver.org/). **Star + Watch the repo to get notified when new experts ship.**
+[SemVer](https://semver.org/).
 
 ## [Unreleased]
 

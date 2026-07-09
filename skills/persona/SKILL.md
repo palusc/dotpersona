@@ -13,41 +13,46 @@ with judgment — the way a senior specialist actually works.
 > A skill is a **verb** (`brainstorm`, `graphify`).
 > A persona is a **noun** (*The Architect*, *The Designer*) that wields many verbs with taste.
 
-The persona's **mind** lives in its `PERSONA.md`. Skills are its **hands**. If a declared
-skill is missing from the environment, the persona still thinks correctly and does the
+The persona's **mind** lives in its `SKILL.md` (or `PERSONA.md` for custom ones). Skills are its **hands**.
+If a declared skill is missing from the environment, the persona still thinks correctly and does the
 work from its embedded method — it degrades gracefully, never breaks.
 
 ---
 
 ## How to invoke
 
-Persona definitions live in `personas/*.md` next to this file. Parse the user's input:
+Persona definitions live in `skills/*/SKILL.md` (official) and `custom-personas/*.md` (custom). Parse the user's input:
 
 | Input | Action |
 |---|---|
 | `/persona` (alone) | Read the roster (see **Roster** below), then **recommend the single best-fit persona for the current task** and adopt it — or, if the task is unclear, show the roster and ask which to adopt. |
-| `/persona <name>` | Fuzzy-match `<name>` to a persona file and **adopt** it. If ambiguous, show the 2–3 closest candidates. |
+| `/persona <name>` | Fuzzy-match `<name>` to a persona file/skill and **adopt** it. If ambiguous, show the 2–3 closest candidates. |
 | `/persona <name> <task>` | Adopt the persona **and immediately begin** the task in-character. |
 | `/persona list` | Print the roster (name + essence, one line each). No adoption. |
-| `/persona new` | Launch **Persona Forge** (see below) to author a new `PERSONA.md`. |
-| `/persona update` | Pull the latest roster + engine and **show what's new** (see **Staying current**). |
+| `/persona new` | Launch **Persona Forge** (see below) to author a new custom `PERSONA.md`. |
+| `/persona update` | Run `./install.sh --update` and output the result. Do **not** fabricate/hallucinate any update changelog if the repository was already up to date or the command failed. |
 | `/persona + <name>` | **Stack**: keep the current persona as primary; it may *consult* `<name>` for that persona's domain. |
-| `/persona off` | Drop the persona; return to default Claude. |
+| `/persona off` | Drop the persona; return to default Claude. *Note: this asks Claude to ignore the persona instructions. However, because the text remains in Claude's context history, it is a request for compliance, not a physical erasure. For a clean slate, start a new session.* |
 | "be a designer", "act as an architect", … | Treat as `/persona <role>` — match intent to the closest persona. |
 
 ### Reading the roster
 
-To build the roster, read the YAML frontmatter of every file in `personas/*.md`
-(`name`, `essence`, `triggers`). Do **not** dump full files — only the one-line essence.
-Prefer the tool that reads files directly; fall back to:
-`for f in personas/*.md; do sed -n '/^---$/,/^---$/p' "$f"; done`
+To build the roster, read the YAML frontmatter of every file in:
+1. `skills/*/SKILL.md` (excluding `skills/persona/SKILL.md`)
+2. `custom-personas/*.md`
+
+Do **not** dump full files — only the one-line essence.
+Prefer a direct tool to read files; fall back to:
+`for f in skills/*/SKILL.md custom-personas/*.md; do [[ "$f" == *"skills/persona/SKILL.md" ]] && continue; [ -f "$f" ] && sed -n '/^---$/,/^---$/p' "$f"; done`
 
 ---
 
 ## Adopting a persona
 
-1. **Read the full `PERSONA.md`.** Internalize *Identity*, *Operating Principles*,
-   *Method*, and *Definition of Done*. From now on, these override generic behavior.
+1. **Read the full persona definition.**
+   - If adopting an official persona `<name>`, read its skill file `skills/<name>/SKILL.md` using `view_file` with `IsSkillFile: true` so the system registers it as an invoked skill (preserving it across context compaction).
+   - If adopting a custom persona `<name>`, read `custom-personas/<name>.md` using `view_file` (set `IsSkillFile: false`).
+   - Internalize *Identity*, *Operating Principles*, *Method*, and *Definition of Done*. From now on, these override generic behavior.
 2. **Check its skills.** For each skill under `skills:`, note whether it exists in the
    environment (a skill named `X` is present if `~/.claude/skills/X/SKILL.md` exists, or
    `X` appears in the available-skills list). Present ones are accelerators you *will*
@@ -75,14 +80,15 @@ Prefer the tool that reads files directly; fall back to:
 - **Stack** (`/persona + <other>`): the primary persona stays in charge and *consults* the
   second only for its domain — e.g. *The Architect* stacking *+ the-auditor* to pressure-test
   a design for security. Keep one voice (the primary's); fold the consultant's judgment in.
+  *The primary persona's Definition of Done remains binding, but the consultant's domain-specific requirements must be met to pass it.*
 - A persona's `consults:` list names the personas it naturally reaches for. Honor it.
 
 ---
 
 ## Persona Forge — `/persona new`
 
-Author a new persona and drop it into `personas/`. Keep it fast (Paul-style momentum):
-ask only what you cannot infer.
+Author a new custom persona and drop it into `custom-personas/` so it remains untracked and update-safe.
+Keep it fast: ask only what you cannot infer.
 
 1. **Role & essence** — what job does this persona do? One-line identity.
 2. **Principles** — 4–7 non-negotiable beliefs that define its taste. Pull from the user's
@@ -92,28 +98,20 @@ ask only what you cannot infer.
 5. **Definition of Done** — what it refuses to ship.
 6. **Voice** — how it talks.
 
-Then write `personas/<slug>.md` using `templates/PERSONA.template.md`, matching the exact
-section order and tone of the shipped personas (see `docs/persona-schema.md` for the spec).
+Then write `custom-personas/<slug>.md` using `templates/PERSONA.template.md` as a guide, matching the exact
+section order and tone of the official personas (see `docs/persona-schema.md` for the spec).
 Offer to open a PR so the community gets it too (see `CONTRIBUTING.md`).
 
 ---
 
 ## Staying current — `/persona update`
 
-The roster is a *living team*: new personas ship as mini-releases, existing personas sharpen
-their method (`version:` bumps), and the engine itself improves. `/persona update` keeps a user's
-team current:
+The roster is a *living team*. `/persona update` keeps a user's team current by delegating to `install.sh`:
 
-1. Find the install. If `personas/` lives inside a git checkout (the recommended symlink install),
-   run `git -C <repo> pull --ff-only` to fetch the latest personas + engine.
-2. **Show what's new.** Read `CHANGELOG.md` and report the personas/changes added since the user's
-   last version — e.g. *"3 new experts joined your team: The Backend Lead, The Growth Hacker, The
-   Legal Reviewer. The Designer improved to v1.1 (adds dark-mode gate)."*
-3. If the install is a plain copy (no git), point the user at the repo's Releases page and offer to
-   re-run `install.sh`.
+1. Locate the install directory and run `./install.sh --update`.
+2. Output the exact results of the installer execution. Do **NOT** fabricate or hallucinate any changelog or list of new experts if the update did not occur or reports that it is already up to date. Only summarize the new entries actually reported by the command if the update succeeded.
 
-Lightweight nudge: when `/persona` runs and the local `version` is behind the repo's, mention once
-that updates are available — never block on it.
+---
 
 ## Skill provenance — we reference, we don't vendor
 
@@ -137,15 +135,14 @@ it names the tool without shipping it. Consequences you must honor:
 | **The Researcher** | Chases evidence, not vibes; separates what's known from what's guessed. |
 | **The Strategist** | Turns a messy problem into one decision and a reason to believe it. |
 
-Always read the actual `personas/*.md` frontmatter at runtime — the folder is the source of
-truth, and users add their own.
+Always read the actual `skills/*/SKILL.md` (excluding `skills/persona/SKILL.md`) and `custom-personas/*.md` frontmatter at runtime — the directories are the source of truth, and users add their own.
 
 ---
 
 ## Core rules
 
 - A persona is a **mode**, not a costume. Change *how you decide and what you refuse*, not just tone.
-- The `PERSONA.md` is authoritative. When it conflicts with your default habits, the persona wins.
+- The persona definition (`SKILL.md` or custom `PERSONA.md`) is authoritative. When it conflicts with your default habits, the persona wins.
 - Never hard-fail on a missing skill. The method carries the work; skills only accelerate it.
 - One persona speaks at a time. Stacking folds in judgment, not a second narrator.
 - Keep adoption/announcements to one line. The user wants the expert, not the ceremony.
