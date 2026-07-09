@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 230" width="100%" height="230">
+  <defs>
+    <!-- Sketchy hand-drawn filter for natural look -->
+    <filter id="rough" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="4" result="noise" />
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.5" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+  </defs>
+
+  <style>
+    .sketch { stroke: #24292f; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .text { fill: #24292f; font-family: "Comic Sans MS", "Chalkboard SE", "Comic Neue", sans-serif; font-size: 13px; font-weight: bold; }
+    .cmd { fill: #0969da; font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; font-size: 12px; font-weight: bold; }
+    .bubble { stroke: #8c959f; fill: none; stroke-width: 1.5; stroke-dasharray: 4 2; }
+    
+    @media (prefers-color-scheme: dark) {
+      .sketch { stroke: #f0f6fc; }
+      .text { fill: #f0f6fc; }
+      .cmd { fill: #58a6ff; }
+      .bubble { stroke: #484f58; }
+    }
+    
+    .accent-red { stroke: #cf222e; }
+    .accent-green { stroke: #1a7f37; }
+    
+    @media (prefers-color-scheme: dark) {
+      .accent-red { stroke: #ff7b72; }
+      .accent-green { stroke: #3fb950; }
+    }
+  </style>
+
+  <!-- ================= LEFT: DEFAULT CLAUDE ================= -->
+  <g filter="url(#rough)">
+    <!-- Speech bubble -->
+    <path class="sketch bubble" d="M 30,20 Q 30,10 40,10 L 170,10 Q 180,10 180,20 L 180,65 Q 180,75 170,75 L 100,75 L 85,95 L 80,75 L 40,75 Q 30,75 30,65 Z" />
+    <text class="text" x="42" y="32">"Maybe try Joi?</text>
+    <text class="text" x="42" y="50">Or wrap in try/catch?</text>
+    <text class="text" x="42" y="68">Let's format things..."</text>
+
+    <!-- Robot Stick Figure -->
+    <!-- Head -->
+    <rect class="sketch" x="80" y="110" width="30" height="24" rx="4" />
+    <line class="sketch" x1="95" y1="110" x2="95" y2="102" />
+    <circle class="sketch" cx="95" cy="101" r="2" />
+    <!-- Eyes -->
+    <circle class="sketch" cx="89" cy="120" r="1.5" />
+    <circle class="sketch" cx="101" cy="120" r="1.5" />
+    <!-- Neck & Body -->
+    <line class="sketch" x1="95" y1="134" x2="95" y2="175" />
+    <!-- Shoulders & Shrugging Arms -->
+    <path class="sketch" d="M 75,150 L 95,142 L 115,150" />
+    <path class="sketch" d="M 75,150 L 65,135" /> <!-- Left hand shrugging up -->
+    <path class="sketch" d="M 115,150 L 125,135" /> <!-- Right hand shrugging up -->
+    <!-- Legs -->
+    <line class="sketch" x1="95" y1="175" x2="82" y2="205" />
+    <line class="sketch" x1="95" y1="175" x2="108" y2="205" />
+  </g>
+  <text class="text" x="55" y="222">Default Claude</text>
+
+  <!-- ================= FIRST TRANSITION ================= -->
+  <g filter="url(#rough)">
+    <path class="sketch" d="M 195,150 L 265,150" />
+    <path class="sketch" d="M 255,144 L 265,150 L 255,156" />
+    <text class="cmd" x="188" y="138">/persona auditor</text>
+  </g>
+
+  <!-- ================= MIDDLE: AUDITOR ================= -->
+  <g filter="url(#rough)">
+    <!-- Speech bubble -->
+    <path class="sketch bubble" d="M 285,15 Q 285,5 295,5 L 485,5 Q 495,5 495,15 L 495,75 Q 495,85 485,85 L 360,85 L 345,105 L 340,85 L 295,85 Q 285,85 285,75 Z" />
+    <text class="text" x="298" y="26">"Guilty! Concurrent Double-Spend</text>
+    <text class="text" x="298" y="46">race condition found on line 42.</text>
+    <text class="text" x="298" y="66">Here is the concrete repro trace..."</text>
+
+    <!-- Auditor Detective Stick Figure -->
+    <!-- Head -->
+    <circle class="sketch" cx="340" cy="120" r="12" />
+    <!-- Detective Hat -->
+    <path class="sketch" d="M 322,112 Q 340,92 358,112 Z" /> <!-- Hat crown -->
+    <line class="sketch" x1="318" y1="113" x2="362" y2="113" /> <!-- Hat brim -->
+    <!-- Body -->
+    <line class="sketch" x1="340" y1="132" x2="340" y2="175" />
+    <!-- Arms -->
+    <line class="sketch" x1="340" y1="145" x2="320" y2="152" /> <!-- Left hand on hip -->
+    <line class="sketch" x1="340" y1="145" x2="370" y2="135" /> <!-- Right arm holding magnifying glass -->
+    <!-- Magnifying Glass -->
+    <circle class="sketch" cx="378" cy="132" r="8" />
+    <line class="sketch" x1="384" y1="138" x2="395" y2="148" />
+    <!-- Legs walking -->
+    <line class="sketch" x1="340" y1="175" x2="328" y2="205" />
+    <line class="sketch" x1="340" y1="175" x2="352" y2="205" />
+
+    <!-- Big sketchy bug on floor -->
+    <ellipse class="sketch accent-red" cx="420" cy="190" rx="12" ry="6" />
+    <path class="sketch accent-red" d="M 408,190 L 402,185 M 408,190 L 402,195" /> <!-- Antennas -->
+    <path class="sketch accent-red" d="M 414,195 L 410,202 M 420,196 L 420,204 M 426,195 L 430,202" /> <!-- Legs left -->
+    <path class="sketch accent-red" d="M 414,185 L 410,178 M 420,184 L 420,176 M 426,185 L 430,178" /> <!-- Legs right -->
+  </g>
+  <text class="text" x="335" y="222">The Auditor</text>
+
+  <!-- ================= SECOND TRANSITION ================= -->
+  <g filter="url(#rough)">
+    <path class="sketch" d="M 495,150 L 565,150" />
+    <path class="sketch" d="M 555,144 L 565,150 L 555,156" />
+    <text class="cmd" x="488" y="138">/persona shipper</text>
+  </g>
+
+  <!-- ================= RIGHT: SHIPPER ================= -->
+  <g filter="url(#rough)">
+    <!-- Speech bubble -->
+    <path class="sketch bubble" d="M 590,20 Q 590,10 600,10 L 780,10 Q 790,10 790,20 L 790,65 Q 790,75 780,75 L 725,75 L 710,95 L 705,75 L 600,75 Q 590,75 590,65 Z" />
+    <text class="text" x="602" y="32">"Tests green!</text>
+    <text class="text" x="602" y="50">Double-spend patch verified.</text>
+    <text class="text" x="602" y="68">Deploying to production now!"</text>
+
+    <!-- Rocket and Rider -->
+    <g transform="rotate(-15, 680, 160)">
+      <!-- Rocket Body -->
+      <path class="sketch accent-green" d="M 660,150 L 710,150 Q 730,150 735,160 Q 730,170 710,170 L 660,170 Z" />
+      <path class="sketch accent-green" d="M 660,150 L 645,140 L 660,158 Z" /> <!-- Top fin -->
+      <path class="sketch accent-green" d="M 660,170 L 645,180 L 660,162 Z" /> <!-- Bottom fin -->
+      <path class="sketch accent-red" d="M 645,155 Q 630,160 620,155 Q 630,150 645,155" /> <!-- Flame -->
+      
+      <!-- Rider Stick Figure -->
+      <circle class="sketch" cx="690" cy="135" r="9" /> <!-- Head -->
+      <!-- Body -->
+      <line class="sketch" x1="690" y1="144" x2="690" y2="160" />
+      <!-- Arms raising flag -->
+      <path class="sketch" d="M 690,148 L 705,130 L 720,120" /> 
+      <rect class="sketch accent-green" x="720" y="110" width="18" height="12" /> <!-- Flag -->
+      <line class="sketch" x1="690" y1="148" x2="675" y2="152" /> <!-- Left hand holding rocket -->
+    </g>
+  </g>
+  <text class="text" x="660" y="222">The Shipper</text>
+</svg>

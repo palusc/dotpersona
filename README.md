@@ -11,7 +11,7 @@ a quality bar, and the skills to deliver. Summon the right expert for the job wi
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 <br/>
-<img src="docs/banner.png" alt="Persona Banner" width="600" style="max-width:100%; border-radius:12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);" />
+<img src="docs/scribble.svg" alt="Persona Scribble Comic" width="800" style="max-width:100%;" />
 
 </div>
 
