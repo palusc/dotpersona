@@ -48,9 +48,12 @@ You can also switch naturally in chat: *"be a designer for this"*, *"put on your
 
 ### Real-world Demo
 
-Here is what `/persona auditor` looks like when running in your terminal, finding concurrency race conditions and outputting scoped transaction patches:
+Here is a recording of `/persona` list and `/persona auditor` in action:
 
-<!-- TODO: Add docs/demo-terminal.png (16:10 aspect ratio) screenshot here -->
+<div align="center">
+  <img src="docs/demo.gif" alt="Persona Auditor Demo" width="600" style="max-width:100%; border-radius:12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);" />
+  <p><sub>Generated automatically using <a href="docs/demo.tape">docs/demo.tape</a> and <a href="https://github.com/charmbracelet/vhs">vhs</a></sub></p>
+</div>
 
 ---
 
