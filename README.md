@@ -50,9 +50,7 @@ You can also switch naturally in chat: *"be a designer for this"*, *"put on your
 
 Here is what `/persona auditor` looks like when running in your terminal, finding concurrency race conditions and outputting scoped transaction patches:
 
-<div align="center">
-  <img src="docs/demo-terminal.png" alt="Persona Auditor Terminal Output" width="600" style="max-width:100%; border-radius:12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);" />
-</div>
+<!-- TODO: Add docs/demo-terminal.png (16:10 aspect ratio) screenshot here -->
 
 ---
 
