@@ -1,0 +1,40 @@
+name: release
+
+# Cut a GitHub Release when a version tag is pushed. Releases are what turn a
+# repo "Watch" into a notification — every new expert becomes a mini-release.
+#
+#   git tag v1.1.0 && git push origin v1.1.0
+#
+# The release notes are pulled from the matching CHANGELOG.md section.
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract changelog section for this tag
+        id: notes
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          awk -v v="$version" '
+            $0 ~ "^## \\[" v "\\]" {grab=1; next}
+            grab && /^## \[/ {exit}
+            grab {print}
+          ' CHANGELOG.md > release-notes.md
+          if [ ! -s release-notes.md ]; then
+            echo "See CHANGELOG.md for details." > release-notes.md
+          fi
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Persona ${{ github.ref_name }}"
+          body_path: release-notes.md
+          draft: false
+          prerelease: false

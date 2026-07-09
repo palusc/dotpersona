@@ -1,0 +1,16 @@
+name: validate personas
+
+on:
+  push:
+    branches: [main]
+    paths: ['personas/**', 'scripts/**', '.github/workflows/validate.yml']
+  pull_request:
+    paths: ['personas/**', 'templates/**', 'scripts/**']
+
+jobs:
+  schema:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate persona schema
+        run: bash scripts/validate-personas.sh
