@@ -13,6 +13,14 @@
 <img src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif" alt="Typing Cat" width="300" style="border-radius: 8px;" />
 </div>
 
+## The Pain: Why Persona exists
+
+Every new Claude Code session starts with a blank slate. If you want specialized guidelines, you have two choices:
+1. **Copy-paste massive, fragile system prompts** repeatedly for every new session.
+2. **Bloat a static `CLAUDE.md`** with conflicting rules (architecture, security, DB performance, styling) until the context is diluted, the agent gets confused, and responses slow down.
+
+Persona solves this by **packaging** specialized mindsets into modular, schema-validated, local markdown files. You summon only the expert you need, when you need them.
+
 ## Quick Install
 
 Run this one-liner to link all experts into `~/.claude/skills`:
@@ -37,6 +45,14 @@ Open Claude Code and type `/persona`.
 ```
 
 You can also switch naturally in chat: *"be a designer for this"*, *"put on your auditor hat"*.
+
+### Real-world Demo
+
+Here is what `/persona auditor` looks like when running in your terminal, finding concurrency race conditions and outputting scoped transaction patches:
+
+<div align="center">
+  <img src="docs/demo-terminal.png" alt="Persona Auditor Terminal Output" width="600" style="max-width:100%; border-radius:12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);" />
+</div>
 
 ---
 
@@ -156,6 +172,14 @@ Persona uses dynamic file routing to select the best expert without relying on h
            ├──> Check ~/.claude/skills/ for declared skills (verbs)
            └──> Run Method steps, gate quality on Definition of Done
 ```
+
+#### Robust Script Logic & Installer Safety
+
+Since Persona is implemented directly on top of Claude Code's local capabilities, the installer is designed with strict system safety conventions:
+* **Fail-Fast Shell Execution:** The installer is locked down with `set -euo pipefail` to guarantee any execution error halts the script instantly, preventing partially configured states.
+* **Non-Destructive Backups:** Before linking any skill to `~/.claude/skills/`, the script checks for existing files. If a custom folder already exists, it is renamed to a backup (`<name>.backup.<pid>`) rather than deleted or overwritten.
+* **Conflict-Free Customizations:** User-created personas are written to `custom-personas/` which is globally ignored in `.gitignore`. This keeps custom experts update-safe and free from upstream merge conflicts.
+* **Deterministic Updates:** The `/persona update` engine uses standard, clean Fast-Forward (`--ff-only`) git updates, showing exactly what changed from `CHANGELOG.md` without modifying local state.
 </details>
 
 <details>
