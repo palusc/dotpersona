@@ -1,220 +1,104 @@
-<div align="center">
-
 # 🎭 Persona for Claude Code
 
-### Don't just give your AI tools. Give it a team.
+**Turn Claude Code into a team of senior specialists.** Summon the right expert for your workspace with a single command.
 
-**Persona turns Claude into a roster of senior specialists** — each with a mindset, a method,
-a quality bar, and the skills to deliver. Summon the right expert for the job with one command.
-
-[![Validate Status](https://github.com/palusc/dotpersona/actions/workflows/validate.yml/badge.svg)](https://github.com/palusc/dotpersona/actions/workflows/validate.yml)
-[![Claude Code Compatible](https://img.shields.io/badge/Claude%20Code-compatible-purple?logo=anthropic)](https://github.com/anthropics/claude-code)
-[![Awesome Claude Code](https://img.shields.io/badge/Awesome-Claude%20Code-brightgreen)](https://github.com/subinium/awesome-claude-code)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-orange.svg)](CONTRIBUTING.md)
-
-<br/>
-<img src="docs/scribble.svg" alt="Persona Scribble Comic" width="800" style="max-width:100%;" />
-
+<div align="center">
+  <img src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif" alt="Typing Cat" width="300" style="border-radius: 8px;" />
 </div>
 
----
+## Quick Install
 
-```
-  /persona designer   →  — The Designer. I'll understand the design system before I touch a pixel.
-  /persona auditor    →  — The Auditor. I'll assume this code is guilty until I prove it correct.
-  /persona dba        →  — The DBA. I treat databases as high-performance execution engines.
-  /persona tester     →  — The Tester. While you write code to work, I write tests to prove it can't break.
-```
-
-## The idea
-
-A **skill** is a *verb* — `brainstorm`, `graphify`, `dataviz`. A single tool that does one thing.
-
-A **persona** is a *noun* — *The Architect*, *The Designer* — a whole professional identity that
-**wields many skills with judgment**. It doesn't just "use the design tool"; it *understands the
-design system first*, has taste with reasons, holds a quality bar, and knows which tool to reach
-for and when.
-
-> **The persona's mind lives in its `SKILL.md`. Skills are its hands.**
-> If a skill isn't installed, the persona still thinks correctly and does the work by hand —
-> it degrades gracefully, it never breaks.
-
-That's the difference between handing someone a toolbox and hiring someone who knows the craft.
-
-### Why not just use a system prompt?
-While you can type these instructions into a system prompt by hand, it is hard to scale, share, and maintain. Persona solves this through **packaging**: it provides a versioned, routable, schema-validated repertoire of opinionated prompts that your team doesn't have to re-type, copy-paste, or construct from scratch for every new session.
-
-## Proof: Default Claude vs. `/persona auditor`
-
-To see how a persona shifts Claude from standard chatbot style to professional developer rigor, see what happens when each audits an Express endpoint with a double-spend race condition:
-
-````carousel
-### Default Claude
-*Focuses on style, general nits, and standard practices, diluting the critical logic bugs.*
-
-**Claude:**
-Here are some suggestions to improve this endpoint:
-
-1. **Input Validation:** Use a library like `joi` or `express-validator` to ensure that `amount` is a positive number and the IDs are strings.
-2. **Error Handling:** Wrap the database calls in a `try/catch` block to handle database connection issues and return a `500 Internal Server Error`.
-3. **Use Types:** If this is TypeScript, define interfaces for the request body.
-4. **Structured Logging:** Log the transaction details (excluding sensitive data) using `winston` for better observability.
-5. **Database Transactions:** You might want to wrap these updates in a transaction so that if the second update fails, the first one is rolled back.
-
-Would you like me to rewrite the endpoint with these improvements?
-
-<!-- slide -->
-### `/persona auditor`
-*Summoned as the expert. Assumes the code is guilty until proven correct, ignores all formatting/style nits, and focuses entirely on concrete repros of critical bugs.*
-
-**Claude:**
-*— The Auditor. I'll assume this code is guilty until I prove it correct.*
-
-### Contract
-The route must transfer money atomically and never allow double-spending or money creation.
-
-### Findings
-
-#### 1. CONFIRMED: Concurrent Double-Spend (Critical)
-- **Repro:** User A has a balance of $100. They send two concurrent requests to transfer $100 to User B.
-- **Trace:**
-  1. Request 1 reads balance $100. Passes balance check.
-  2. Request 2 reads balance $100 (before Request 1 writes balance update). Passes balance check.
-  3. Request 1 updates User A balance to $0, User B gets +$100.
-  4. Request 2 updates User A balance to $0, User B gets +$100.
-- **Result:** $200 is transferred out of User A's $100 balance.
-
-#### 2. CONFIRMED: Non-Transactional Balance Transfer (High)
-- **Repro:** User A balance is $100. Request to transfer $100.
-- **Trace:**
-  1. User A balance updated to $0.
-  2. The network drops or the server crashes before `toUserId`'s balance is updated.
-- **Result:** $100 is deducted from User A but never credited to User B. Money is permanently lost.
-
-### Scoped Fix
-
-```javascript
-app.post('/transfer', async (req, res) => {
-  const { fromUserId, toUserId, amount } = req.body;
-  if (amount <= 0) return res.status(400).send("Invalid amount");
-
-  await db.transaction(async (tx) => {
-    // Acquire a lock on the sender to prevent race conditions
-    const fromUser = await tx.getUserForUpdate(fromUserId);
-    if (fromUser.balance < amount) {
-      throw new Error("Insufficient funds");
-    }
-    
-    await tx.updateBalance(fromUserId, fromUser.balance - amount);
-    await tx.updateBalance(toUserId, (await tx.getUser(toUserId)).balance + amount);
-  }).then(() => res.send("Success"))
-    .catch((err) => res.status(400).send(err.message));
-});
-```
-````
-
-For a detailed analysis, see [Before/After transcript](docs/before-after.md).
-
-## Why Persona?
-
-| Feature / Dimension | Plain Claude | Custom `CLAUDE.md` / Prompts | Standalone MCP / Skills | 🎭 **Persona** |
-|---|---|---|---|---|
-| **Routability** | ❌ None | ❌ Manual (copy-paste) | ❌ None | **✅ Auto-routed** based on current workspace files |
-| **Composition** | ❌ Mixed context | ❌ Manual stacking | ❌ None | **✅ Stackable** (`/persona + auditor`) and switchable |
-| **Graceful Degradation** | ❌ N/A | ❌ N/A | ❌ Hard error if missing | **✅ Falls back** to manual process if skill is missing |
-| **Validation & Schema** | ❌ None | ❌ None | ❌ None | **✅ Schema-enforced** (`docs/persona-schema.md`) structure |
-| **Opinionated Mindsets** | ❌ Conversational | ❌ Vague generalists | ❌ Verbs only (tools) | **✅ High-judgment** senior specialist roles (minds) |
-
-## The roster
-
-| | Persona | Essence |
-|---|---|---|
-| 🏛️ | **[The Architect](skills/the-architect/SKILL.md)** | Designs systems that survive contact with reality. |
-| 🎨 | **[The Designer](skills/the-designer/SKILL.md)** | Understands the system before touching a pixel; ships taste, not decoration. |
-| 🚀 | **[The Shipper](skills/the-shipper/SKILL.md)** | Momentum over ceremony — small, verified steps that reach production. |
-| 🔍 | **[The Auditor](skills/the-auditor/SKILL.md)** | Assumes the code is guilty until proven correct; hunts the input that breaks it. |
-| 📚 | **[The Researcher](skills/the-researcher/SKILL.md)** | Chases evidence, not vibes; separates what's known from what's guessed. |
-| ♟️ | **[The Strategist](skills/the-strategist/SKILL.md)** | Turns a messy problem into one decision and a reason to believe it. |
-| 🗄️ | **[The DBA](skills/the-dba/SKILL.md)** | Optimizes database schemas, queries, indexes, and designs zero-downtime migrations. |
-| 🧪 | **[The Tester](skills/the-tester/SKILL.md)** | Hunts boundary conditions and edge cases; writes robust unit, integration, and E2E tests. |
-| ✍️ | **[The Wordsmith](skills/the-wordsmith/SKILL.md)** | Refines text, documentation, error logs, and UI copy to be clear, active, and punchy. |
-
-**More experts are hiring →** see the [Roadmap](ROADMAP.md). Domain leads (Backend, Frontend, Data),
-specialists (Growth, Copy, Legal) and more are on the way.
-
-## Install
-
-Run the one-liner in your terminal to link all experts as first-class skills into `~/.claude/skills`:
+Run this one-liner to link all experts into `~/.claude/skills`:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/palusc/dotpersona/main/install.sh | bash
 ```
 
-That's it. Open Claude Code and type `/persona`.
+Open Claude Code and type `/persona`.
 
-> [!NOTE]
-> **How it works under the hood:** The command clones this repository to `~/.dotpersona` to enable simple self-updates, then symlinks the expert skills directly into Claude Code's config directory (`~/.claude/skills`).
+---
 
-<sub>Prefer manual installation? Clone this repository and run `./install.sh`. Prefer copying files instead of symlinking? Run `./install.sh --copy`. Remove it later with `./install.sh --uninstall`.</sub>
-
-## Use it
-
-```
-/persona                    # recommends the best expert for what you're doing, and adopts it
-/persona designer           # summon a specific persona
-/persona architect design the billing schema   # summon AND start the task in-character
-/persona list               # see the whole roster
-/persona + auditor          # stack: keep your primary, consult The Auditor on security
-/persona new                # forge your own expert (guided)
-/persona update             # pull the latest roster and see what's new
-/persona off                # back to plain Claude
-```
-
-> [!TIP]
-> **Try Stacking!** Running `/persona + auditor` stacks the Auditor's security mindset onto your primary expert. The Auditor's rules will guide the code review without muting the main expert's voice.
-
-You can also just say it: *"be a designer for this"*, *"put on your architect hat"*.
-
-A persona is a **mode, not a costume** — it changes *how Claude decides and what it refuses to
-ship*, not just the tone.
-
-## Keeping your team current
-
-Persona is a **team that keeps hiring**. Inside Claude Code, `/persona update` runs `./install.sh --update` to pull the latest engine improvements, new experts, and versioned updates, then displays the changes.
-
-## Build your own expert
-
-The best rosters are hired by the community. Creating a custom persona is one file:
+## How to use
 
 ```bash
-/persona new     # Persona Forge interviews you and writes custom-personas/<slug>.md
+/persona                    # Auto-recommends and adopts the best expert for your current files
+/persona list               # View the roster of available experts
+/persona auditor            # Adopts a specific specialist (e.g. The Auditor)
+/persona auditor index.js   # Adopt the Auditor and immediately review index.js
+/persona + auditor          # Stack: consult the Auditor while keeping your primary expert
+/persona off                # Return to default Claude
 ```
 
-…or copy [`templates/PERSONA.template.md`](templates/PERSONA.template.md) by hand. The only rule
-that matters: **be opinionated.** A persona must hold at least one belief a generalist wouldn't —
-a line it draws that changes the outcome. If it behaves like plain Claude, it's noise.
+You can also switch naturally in chat: *"be a designer for this"*, *"put on your auditor hat"*.
 
-Then [open a PR](CONTRIBUTING.md) — your name goes on the persona, and it joins everyone's team.
+---
 
-## We reference skills — we don't steal them
+## The Roster
 
-A persona *names* the skills it likes to orchestrate; it never bundles another author's code.
-Declaring `dataviz` is like a résumé saying "proficient in Figma" — it names the tool without
-shipping it. Skill authors are credited in [`docs/recommended-skills.md`](docs/recommended-skills.md),
-and every persona works with **none** of them installed. Standalone, MIT, yours.
+Every persona holds a unique **mindset, method, quality bar, and voice** tailored to a specific developer role:
 
-## Learn more
+| Role | Essence |
+|---|---|
+| 🏛️ **[The Architect](skills/the-architect/SKILL.md)** | Designs systems that survive contact with reality. |
+| 🎨 **[The Designer](skills/the-designer/SKILL.md)** | Understands the design system before touching a pixel; ships taste. |
+| 🚀 **[The Shipper](skills/the-shipper/SKILL.md)** | Momentum over ceremony — small, verified steps to production. |
+| 🔍 **[The Auditor](skills/the-auditor/SKILL.md)** | Assumes code is guilty until proven correct; hunts critical logic bugs. |
+| 🗄️ **[The DBA](skills/the-dba/SKILL.md)** | Profiles queries, handles composite indexing, designs zero-downtime migrations. |
+| 🧪 **[The Tester](skills/the-tester/SKILL.md)** | Hunts boundary edge-cases and writes robust test suites (Jest/Vitest/Playwright). |
+| ✍️ **[The Wordsmith](skills/the-wordsmith/SKILL.md)** | Refines developer docs, UI copy, and logs to be punchy and active. |
+| 📚 **[The Researcher](skills/the-researcher/SKILL.md)** | Chases evidence over vibes; separates what is known from guessed. |
+| ♟️ **[The Strategist](skills/the-strategist/SKILL.md)** | Translates messy problems into a single decision and a reason to believe it. |
 
-- 🧠 [How it works](docs/how-it-works.md) — the architecture and mental model
-- 🧪 [Before/After transcript](docs/before-after.md) — see how /persona auditor catches bugs default Claude misses
-- 📐 [The `PERSONA.md` schema](docs/persona-schema.md) — the contract every persona follows
-- ✍️ [Creating a persona](docs/creating-a-persona.md) — a hands-on tutorial
-- 🗺️ [Roadmap](ROADMAP.md) · 📓 [Changelog](CHANGELOG.md) · 🤝 [Contributing](CONTRIBUTING.md)
+---
+
+## Why Persona? (Comparison)
+
+| Feature / Dimension | Plain Claude | Custom `CLAUDE.md` | Standalone Skills | 🎭 **Persona** |
+|---|---|---|---|---|
+| **Routability** | ❌ None | ❌ Manual copy-paste | ❌ None | **✅ Auto-routed** based on current workspace files |
+| **Composition** | ❌ Mixed context | ❌ Manual stacking | ❌ None | **✅ Stackable** (`/persona + auditor`) and switchable |
+| **Graceful Degradation** | ❌ N/A | ❌ N/A | ❌ Hard error if missing | **✅ Falls back** to manual process if skill is missing |
+| **Validation & Schema** | ❌ None | ❌ None | ❌ None | **✅ Schema-enforced** (`docs/persona-schema.md`) structure |
+| **Opinionated Mindsets** | ❌ Conversational | ❌ Vague generalists | ❌ Verbs only (tools) | **✅ High-judgment** senior specialist roles (minds) |
+
+---
+
+<details>
+<summary>🛠️ <b>Build Your Own Expert</b></summary>
+
+Persona includes a **Persona Forge** guided interview to let you draft your own update-safe custom personas:
+
+```bash
+/persona new
+```
+
+This interviews you and generates a custom persona markdown file under `custom-personas/` using a strict schema constraint. You can then link and submit your persona back to the community via a pull request.
+</details>
+
+<details>
+<summary>🔄 <b>Self-Updates</b></summary>
+
+The installer clones the repository to `~/.dotpersona`. Inside Claude Code, typing `/persona update` automatically pulls the latest improvements and symlinks any newly added community experts.
+</details>
+
+<details>
+<summary>⚡ <b>Graceful Degradation</b></summary>
+
+A persona *references* skills (verbs) but does not vendor them. If a referenced skill is missing from your system, the persona falls back to its embedded method to solve the task manually. It never breaks your session or requests you to install dependencies before helping.
+</details>
+
+<details>
+<summary>📚 <b>Documentation Index</b></summary>
+
+- 🧠 **[How it works](docs/how-it-works.md)** — The engine, lifecycle, and routing mechanics.
+- 🧪 **[Before/After Proof](docs/before-after.md)** — See `/persona auditor` catch double-spends that default Claude misses.
+- 📐 **[Schema Contract](docs/persona-schema.md)** — The strict markdown layout every persona follows.
+- ✍️ **[Tutorial: Creating a Persona](docs/creating-a-persona.md)** — Step-by-step guide to authoring.
+- 🤝 **[Contributing](CONTRIBUTING.md)** · 🗺️ **[Roadmap](ROADMAP.md)** · 📓 **[Changelog](CHANGELOG.md)**
+</details>
+
+---
 
 ## License
 
-[MIT](LICENSE) © 2026 Paul Schirra and Persona contributors. Referenced skills belong to their
-authors under their own licenses.
-
-<div align="center"><sub>Built with Claude Code. Hire an expert, not a tool.</sub></div>
+[MIT](LICENSE) © 2026 Paul Schirra and Persona contributors.
