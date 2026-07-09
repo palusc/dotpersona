@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 340" width="1200" height="340" role="img" aria-label="Persona for Claude Code — turn Claude Code into a team of senior specialists">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b0f19"/>
+      <stop offset="1" stop-color="#131a2e"/>
+    </linearGradient>
+    <linearGradient id="title" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a78bfa"/>
+      <stop offset="0.55" stop-color="#818cf8"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#7c3aed" stop-opacity="0.42"/>
+      <stop offset="1" stop-color="#7c3aed" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#22d3ee" stop-opacity="0.20"/>
+      <stop offset="1" stop-color="#22d3ee" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- backdrop -->
+  <rect width="1200" height="340" rx="20" fill="url(#bg)"/>
+  <rect x="1" y="1" width="1198" height="338" rx="19" fill="none" stroke="#8b5cf6" stroke-opacity="0.14"/>
+  <circle cx="1020" cy="70" r="300" fill="url(#glow)"/>
+  <circle cx="150" cy="330" r="260" fill="url(#glow2)"/>
+
+  <!-- faint terminal-chevron watermark -->
+  <g stroke="#243050" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.55">
+    <polyline points="980,110 1035,165 980,220"/>
+    <polyline points="1055,110 1110,165 1055,220"/>
+  </g>
+
+  <!-- kicker -->
+  <text x="72" y="86" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" letter-spacing="5" fill="#38bdf8" font-weight="600">CLAUDE&#160;CODE&#160;·&#160;PERSONA&#160;PLUGIN</text>
+
+  <!-- title -->
+  <text x="70" y="178" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="104" font-weight="800" letter-spacing="-2" fill="url(#title)">Persona</text>
+  <rect x="490" y="112" width="26" height="72" rx="4" fill="#39c5cf" opacity="0.9"/>
+
+  <!-- subtitle -->
+  <text x="74" y="234" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="29" fill="#aab4c5">Turn Claude Code into a team of senior specialists.</text>
+
+  <!-- divider -->
+  <rect x="74" y="258" width="1052" height="1.5" fill="#1e2740"/>
+
+  <!-- roster (two left-aligned rows — short enough to fit any font substitution) -->
+  <g font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="19" fill="#7d8aa3" letter-spacing="0.5">
+    <text x="74" y="294">Architect&#160;·&#160;Designer&#160;·&#160;Shipper&#160;·&#160;Auditor&#160;·&#160;DBA</text>
+    <text x="74" y="322">Tester&#160;·&#160;Wordsmith&#160;·&#160;Researcher&#160;·&#160;Strategist</text>
+  </g>
+</svg>

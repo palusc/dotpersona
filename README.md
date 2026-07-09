@@ -1,17 +1,20 @@
-# 🎭 Persona for Claude Code
-
-**Turn Claude Code into a team of senior specialists.** Summon the right expert for your workspace with a single command.
-
 <div align="center">
+
+<img src="docs/banner.svg" alt="Persona for Claude Code — turn Claude Code into a team of senior specialists" width="840" style="max-width:100%;" />
+
+<br/>
+<br/>
 
 [![validate-personas](https://github.com/palusc/dotpersona/actions/workflows/validate.yml/badge.svg)](https://github.com/palusc/dotpersona/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Latest Release](https://img.shields.io/github/v/release/palusc/dotpersona?color=brightgreen)](https://github.com/palusc/dotpersona/releases)
 [![Language](https://img.shields.io/badge/language-Shell-orange.svg)](https://github.com/palusc/dotpersona)
 
-<br/>
-<img src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif" alt="Typing Cat" width="300" style="border-radius: 8px;" />
 </div>
+
+# 🎭 Persona for Claude Code
+
+**Turn Claude Code into a team of senior specialists.** Summon the right expert for your workspace with a single command.
 
 ## The Pain: Why Persona exists
 
