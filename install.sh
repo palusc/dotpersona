@@ -12,12 +12,18 @@ set -euo pipefail
 
 # Get the directory of this script, handling cases where it is run via stdin/curl
 if [[ -z "${BASH_SOURCE[0]:-}" ]]; then
-  echo "✗ install.sh cannot be run directly via curl | bash." >&2
-  echo "  Please clone the repository first, then run install.sh from the repository root:" >&2
-  echo "    git clone https://github.com/palusc/dotpersona.git" >&2
-  echo "    cd dotpersona" >&2
-  echo "    ./install.sh" >&2
-  exit 1
+  REPO_DIR="$HOME/.dotpersona"
+  echo "→ Preparing Dotpersona in $REPO_DIR ..."
+  if [[ -d "$REPO_DIR/.git" ]]; then
+    echo "→ Updating existing repository..."
+    git -C "$REPO_DIR" pull --ff-only
+  else
+    echo "→ Cloning repository..."
+    rm -rf "$REPO_DIR"
+    git clone https://github.com/palusc/dotpersona.git "$REPO_DIR"
+  fi
+  echo "→ Running installer..."
+  exec "$REPO_DIR/install.sh" "$@"
 fi
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

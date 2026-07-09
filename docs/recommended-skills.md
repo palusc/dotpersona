@@ -22,6 +22,9 @@ If an attribution here is wrong, missing, or a skill has moved, please
 | The Auditor | `code-checkup`, `code-review`, `security-review` | mixed |
 | The Researcher | `deep-research`, `webpage-reader`, `youtube-summarizer` | community |
 | The Strategist | `mckinsey-strategist`, `storytelling-expert`, `brainstorming` | mixed |
+| The DBA | `database-migration`, `query-optimization`, `schema-review` | mixed |
+| The Tester | `write-unit-tests`, `write-integration-tests`, `e2e-testing` | mixed |
+| The Wordsmith | `document-generator`, `copywriting`, `technical-writing` | mixed |
 
 ## How to install a missing skill
 

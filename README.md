@@ -10,6 +10,9 @@ a quality bar, and the skills to deliver. Summon the right expert for the job wi
 [![Validate](https://github.com/palusc/dotpersona/actions/workflows/validate.yml/badge.svg)](https://github.com/palusc/dotpersona/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
+<br/>
+<img src="docs/banner.png" alt="Persona Banner" width="600" style="max-width:100%; border-radius:12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);" />
+
 </div>
 
 ---
@@ -109,6 +112,16 @@ app.post('/transfer', async (req, res) => {
 
 For a detailed analysis, see [Before/After transcript](docs/before-after.md).
 
+## Why Persona?
+
+| Feature / Dimension | Plain Claude | Custom `CLAUDE.md` / Prompts | Standalone MCP / Skills | 🎭 **Persona** |
+|---|---|---|---|---|
+| **Routability** | ❌ None | ❌ Manual (copy-paste) | ❌ None | **✅ Auto-routed** based on current workspace files |
+| **Composition** | ❌ Mixed context | ❌ Manual stacking | ❌ None | **✅ Stackable** (`/persona + auditor`) and switchable |
+| **Graceful Degradation** | ❌ N/A | ❌ N/A | ❌ Hard error if missing | **✅ Falls back** to manual process if skill is missing |
+| **Validation & Schema** | ❌ None | ❌ None | ❌ None | **✅ Schema-enforced** (`docs/persona-schema.md`) structure |
+| **Opinionated Mindsets** | ❌ Conversational | ❌ Vague generalists | ❌ Verbs only (tools) | **✅ High-judgment** senior specialist roles (minds) |
+
 ## The roster
 
 | | Persona | Essence |
@@ -119,21 +132,24 @@ For a detailed analysis, see [Before/After transcript](docs/before-after.md).
 | 🔍 | **[The Auditor](skills/the-auditor/SKILL.md)** | Assumes the code is guilty until proven correct; hunts the input that breaks it. |
 | 📚 | **[The Researcher](skills/the-researcher/SKILL.md)** | Chases evidence, not vibes; separates what's known from what's guessed. |
 | ♟️ | **[The Strategist](skills/the-strategist/SKILL.md)** | Turns a messy problem into one decision and a reason to believe it. |
+| 🗄️ | **[The DBA](skills/the-dba/SKILL.md)** | Optimizes database schemas, queries, indexes, and designs zero-downtime migrations. |
+| 🧪 | **[The Tester](skills/the-tester/SKILL.md)** | Hunts boundary conditions and edge cases; writes robust unit, integration, and E2E tests. |
+| ✍️ | **[The Wordsmith](skills/the-wordsmith/SKILL.md)** | Refines text, documentation, error logs, and UI copy to be clear, active, and punchy. |
 
 **More experts are hiring →** see the [Roadmap](ROADMAP.md). Domain leads (Backend, Frontend, Data),
 specialists (Growth, Copy, Legal) and more are on the way.
 
 ## Install
 
+Run the one-liner in your terminal to link all experts as first-class skills into `~/.claude/skills`:
+
 ```bash
-git clone https://github.com/palusc/dotpersona.git
-cd dotpersona
-./install.sh          # links each expert as a first-class skill into ~/.claude/skills
+curl -fsSL https://raw.githubusercontent.com/palusc/dotpersona/main/install.sh | bash
 ```
 
 That's it. Open Claude Code and type `/persona`.
 
-<sub>Prefer a copy over a symlink? `./install.sh --copy`. Remove it later with `./install.sh --uninstall`.</sub>
+<sub>Prefer manual installation? Clone this repository and run `./install.sh`. Prefer copying files instead of symlinking? Run `./install.sh --copy`. Remove it later with `./install.sh --uninstall`.</sub>
 
 ## Use it
 
