@@ -23,7 +23,26 @@ A single system prompt can achieve many of these goals, but it is hard to scale,
 
 - **Graceful degradation is a hard rule.** Because the mind is self-contained, a persona stays fully functional even when *none* of its declared skills are installed. A missing skill is non-fatal: the persona falls back to the embedded Method and does the work by hand. The engine never tells the user to go install something before it will help.
 
+### Persona vs. Static `CLAUDE.md` Setups
+
+Many projects rely on a static `CLAUDE.md` to define project guidelines. While useful for simple instructions, this approach falls short for sophisticated agent coordination:
+- **Context Bloat & Guidance Dilution:** Packing guidelines for architecture, security audits, database rules, testing, and UI styling into one `CLAUDE.md` creates a monolithic prompt. This dilutes Claude's focus, increases token usage, and leads to contradictory constraints.
+- **No Dynamic Stacking or Handoffs:** A `CLAUDE.md` is permanent and static for the session. Persona allows you to switch specialists on the fly (`/persona dba` to `/persona designer`) or stack them (`/persona + auditor` to consult security while building schemas), keeping the active context clean.
+- **Schema-Enforced Quality:** Monolithic instructions easily devolve into vague summaries. Persona enforces a strict Markdown schema contract (`Identity` → `Principles` → `Method` → `DoD`), guaranteeing that every expert is opinionated and operates under a structured checklist.
+
 ```
+       Monolithic CLAUDE.md                    🎭 Persona Engine
+┌───────────────────────────────┐      ┌──────────────┐ ┌──────────────┐
+│  Architecture + Testing + DB  │      │ /persona dba │ │ /persona off │
+│  + Styling + Security Rules   │      └──────┬───────┘ └──────┬───────┘
+└──────────────┬────────────────┘             │                │
+               │ (Loaded always)              ├──> Load DBA    └──> Return to
+               ▼                              │    Only             Generalist
+       [ Diluted Context ]                    ▼
+                                       [ Clean Context ]
+```
+
+---
       persona/SKILL.md  =  the MIND  (identity · principles · method · DoD · voice)
              │
              │  reaches for ↓  (soft dependency — degrades gracefully)

@@ -3,7 +3,14 @@
 **Turn Claude Code into a team of senior specialists.** Summon the right expert for your workspace with a single command.
 
 <div align="center">
-  <img src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif" alt="Typing Cat" width="300" style="border-radius: 8px;" />
+
+[![validate-personas](https://github.com/palusc/dotpersona/actions/workflows/validate.yml/badge.svg)](https://github.com/palusc/dotpersona/actions/workflows/validate.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Latest Release](https://img.shields.io/github/v/release/palusc/dotpersona?color=brightgreen)](https://github.com/palusc/dotpersona/releases)
+[![Language](https://img.shields.io/badge/language-Shell-orange.svg)](https://github.com/palusc/dotpersona)
+
+<br/>
+<img src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif" alt="Typing Cat" width="300" style="border-radius: 8px;" />
 </div>
 
 ## Quick Install
@@ -64,6 +71,94 @@ Every persona holds a unique **mindset, method, quality bar, and voice** tailore
 ---
 
 <details>
+<summary>📖 <b>Quick Examples & Workflows</b></summary>
+
+Here is how different personas respond to specific developer scenarios in your workspace:
+
+#### 1. Security Review (`/persona auditor server.js`)
+* **Scenario:** Auditing an Express transfer handler.
+* **Input code:**
+  ```javascript
+  app.post('/transfer', async (req, res) => {
+    const { fromUserId, toUserId, amount } = req.body;
+    const fromUser = await db.getUser(fromUserId);
+    if (fromUser.balance < amount) return res.status(400).send("Insufficient funds");
+    await db.updateBalance(fromUserId, fromUser.balance - amount);
+    await db.updateBalance(toUserId, (await db.getUser(toUserId)).balance + amount);
+    res.send("Success");
+  });
+  ```
+* **Auditor's Output:**
+  ```
+  — The Auditor. I'll assume this code is guilty until I prove it correct.
+
+  ### Findings
+  1. CONFIRMED: Concurrent Double-Spend (Critical)
+     - Repro: User A (balance $100) fires two concurrent requests to transfer $100.
+     - Trace: Request 1 & 2 read balance $100 concurrently, passing the check. Both update balance, resulting in a negative balance or double spend.
+  2. CONFIRMED: Non-Transactional Write (High)
+     - Repro: Network failure after the first updateBalance call. Money is deducted from sender but never credited to receiver.
+
+  ### Scoped Fix
+  [Provides transactional database block with row-level locks]
+  ```
+
+#### 2. Database Migration (`/persona dba schema.prisma`)
+* **Scenario:** Adding a new non-null profile bio column to a user table with millions of rows.
+* **DBA's Output:**
+  ```
+  — The DBA. I optimize database schemas, queries, and migrations.
+
+  ### Recommendation: Zero-Downtime Migration
+  Do not run a raw `ALTER TABLE User ADD COLUMN bio VARCHAR(255) NOT NULL DEFAULT '';` on your live database, as this will lock the table.
+
+  ### Steps:
+  1. Expand: Add the column as nullable.
+  2. Write-to-Both: Update application code to write to both the old schema patterns or handle default fallback.
+  3. Backfill: Batch-update existing rows in chunks of 5,000 to set the default value.
+  4. Contract: Apply the `NOT NULL` constraint with `VALIDATE CONSTRAINT` asynchronously.
+  ```
+
+#### 3. Test Generation (`/persona tester auth.js`)
+* **Scenario:** Writing test cases for a token validation helper.
+* **Tester's Output:**
+  ```
+  — The Tester. Happy paths are boring; I write tests to prove code can't break.
+
+  ### Test Suite Plan (Vitest)
+  - [x] Happy Path: Valid token returns claims and expiration.
+  - [x] Boundary: Token expires exactly at current time (should fail).
+  - [x] Error Path: Malformed JWT structure throws JSON parse error.
+  - [x] Error Path: Empty authorization header returns 401.
+  - [x] Edge Case: Expiration timestamp overflow values.
+  ```
+</details>
+
+<details>
+<summary>⚙️ <b>Architecture & Auto-Routing Flow</b></summary>
+
+Persona uses dynamic file routing to select the best expert without relying on hardcoded centralized registries.
+
+#### How it works:
+1. **Invocation:** When you type `/persona` inside Claude Code, the system checks the files in your current workspace active file or git diff.
+2. **Indexing:** The engine reads the `triggers` list from the YAML frontmatter of all `skills/*/SKILL.md` and `custom-personas/*.md` files.
+3. **Trigger Matching:** If your active file is `schema.sql`, it matches triggers like `sql` or `schema` to load the `dba` persona. If it's a CSS file, it loads the `designer` persona.
+4. **Adoption:** The engine reads the chosen persona file using `view_file` (retaining it in memory even during context compaction), adopts its mindset (Identity, Operating Principles), and executes its sequential process (Method, DoD).
+
+```
+   [ /persona command ]
+           │
+           ├──> Inspect current workspace files (Active file / Git diff)
+           ├──> Match file extensions/names to triggers (e.g. `.sql` -> `dba`)
+           ├──> Adopt best-fit persona (Identity, Method, DoD)
+           │
+       [ Operate Phase ]
+           ├──> Check ~/.claude/skills/ for declared skills (verbs)
+           └──> Run Method steps, gate quality on Definition of Done
+```
+</details>
+
+<details>
 <summary>🛠️ <b>Build Your Own Expert</b></summary>
 
 Persona includes a **Persona Forge** guided interview to let you draft your own update-safe custom personas:
@@ -85,6 +180,16 @@ The installer clones the repository to `~/.dotpersona`. Inside Claude Code, typi
 <summary>⚡ <b>Graceful Degradation</b></summary>
 
 A persona *references* skills (verbs) but does not vendor them. If a referenced skill is missing from your system, the persona falls back to its embedded method to solve the task manually. It never breaks your session or requests you to install dependencies before helping.
+</details>
+
+<details>
+<summary>⚠️ <b>Current Limitations & Constraints</b></summary>
+
+To help you get the most out of Persona, keep the following constraints in mind:
+
+* **Session Rollbacks:** Since Persona operates within your chat session history, running `/persona off` asks Claude to return to normal behavior, but the instructions remain in your history. For a completely clean slate, start a new terminal session.
+* **Stacking Limit:** You can stack multiple experts using `/persona + <name>` (e.g., stacking the auditor on top of the architect). However, we recommend a **maximum stack of 2 personas** to avoid context bloat and competing instructions.
+* **CLI Dependencies:** Persona is designed specifically for Anthropic's **Claude Code** skill resolution directories (`~/.claude/skills/`). It does not work automatically with other CLI interfaces like Aider or Copilot CLI without manual path configurations.
 </details>
 
 <details>
