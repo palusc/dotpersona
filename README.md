@@ -1,14 +1,17 @@
 <div align="center">
 
-# 🎭 Persona
+# 🎭 Persona for Claude Code
 
-### Don't give your AI tools. Give it a team.
+### Don't just give your AI tools. Give it a team.
 
 **Persona turns Claude into a roster of senior specialists** — each with a mindset, a method,
 a quality bar, and the skills to deliver. Summon the right expert for the job with one command.
 
-[![Validate](https://github.com/palusc/dotpersona/actions/workflows/validate.yml/badge.svg)](https://github.com/palusc/dotpersona/actions/workflows/validate.yml)
+[![Validate Status](https://github.com/palusc/dotpersona/actions/workflows/validate.yml/badge.svg)](https://github.com/palusc/dotpersona/actions/workflows/validate.yml)
+[![Claude Code Compatible](https://img.shields.io/badge/Claude%20Code-compatible-purple?logo=anthropic)](https://github.com/anthropics/claude-code)
+[![Awesome Claude Code](https://img.shields.io/badge/Awesome-Claude%20Code-brightgreen)](https://github.com/subinium/awesome-claude-code)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-orange.svg)](CONTRIBUTING.md)
 
 <br/>
 <img src="docs/scribble.svg" alt="Persona Scribble Comic" width="800" style="max-width:100%;" />
@@ -19,8 +22,9 @@ a quality bar, and the skills to deliver. Summon the right expert for the job wi
 
 ```
   /persona designer   →  — The Designer. I'll understand the design system before I touch a pixel.
-  /persona architect  →  — The Architect. Let me map the forces in tension before I draw a box.
   /persona auditor    →  — The Auditor. I'll assume this code is guilty until I prove it correct.
+  /persona dba        →  — The DBA. I treat databases as high-performance execution engines.
+  /persona tester     →  — The Tester. While you write code to work, I write tests to prove it can't break.
 ```
 
 ## The idea
@@ -149,6 +153,9 @@ curl -fsSL https://raw.githubusercontent.com/palusc/dotpersona/main/install.sh |
 
 That's it. Open Claude Code and type `/persona`.
 
+> [!NOTE]
+> **How it works under the hood:** The command clones this repository to `~/.dotpersona` to enable simple self-updates, then symlinks the expert skills directly into Claude Code's config directory (`~/.claude/skills`).
+
 <sub>Prefer manual installation? Clone this repository and run `./install.sh`. Prefer copying files instead of symlinking? Run `./install.sh --copy`. Remove it later with `./install.sh --uninstall`.</sub>
 
 ## Use it
@@ -163,6 +170,9 @@ That's it. Open Claude Code and type `/persona`.
 /persona update             # pull the latest roster and see what's new
 /persona off                # back to plain Claude
 ```
+
+> [!TIP]
+> **Try Stacking!** Running `/persona + auditor` stacks the Auditor's security mindset onto your primary expert. The Auditor's rules will guide the code review without muting the main expert's voice.
 
 You can also just say it: *"be a designer for this"*, *"put on your architect hat"*.
 
