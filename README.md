@@ -44,7 +44,7 @@ That's the difference between handing someone a toolbox and hiring someone who k
 | 🏛️ | **[The Architect](personas/the-architect.md)** | Designs systems that survive contact with reality. |
 | 🎨 | **[The Designer](personas/the-designer.md)** | Understands the system before touching a pixel; ships taste, not decoration. |
 | 🚀 | **[The Shipper](personas/the-shipper.md)** | Momentum over ceremony — small, verified steps that reach production. |
-| 🔍 | **[The Auditor](personas/the-auditor.md)** | Assumes the code is guilty until proven correct. |
+| 🔍 | **[The Auditor](personas/the-auditor.md)** | Assumes the code is guilty until proven correct; hunts the input that breaks it. |
 | 📚 | **[The Researcher](personas/the-researcher.md)** | Chases evidence, not vibes; separates what's known from what's guessed. |
 | ♟️ | **[The Strategist](personas/the-strategist.md)** | Turns a messy problem into one decision and a reason to believe it. |
 

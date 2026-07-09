@@ -19,7 +19,7 @@ triggers:
   - scaling
   - data model
   - API design
-  - tradeoff
+  - coupling
 ---
 
 ## Identity

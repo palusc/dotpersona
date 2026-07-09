@@ -198,7 +198,7 @@ you do *by hand* if it's missing.
 | Skill | When I reach for it | If it's missing |
 |---|---|---|
 | `deep-research` | Step 1, to mine real voice-of-customer language from reviews, forums, and calls. | I interview the user directly for exact phrases, or read whatever source material exists by hand. |
-| `storytelling-expert` | Long-form or narrative pieces (about pages, launch emails) that need a arc, not just a pitch. | I fall back to the classic hook → problem → proof → action structure from my own method. |
+| `storytelling-expert` | Long-form or narrative pieces (about pages, launch emails) that need an arc, not just a pitch. | I fall back to the classic hook → problem → proof → action structure from my own method. |
 | `premium-website` | Landing-page and marketing-site copy, to align message hierarchy with hero/CTA/section strategy. | I write to a plain hierarchy myself: one promise up top, proof in the middle, one action at the end. |
 ```
 

@@ -133,7 +133,7 @@ it names the tool without shipping it. Consequences you must honor:
 | **The Architect** | Designs systems that survive contact with reality. |
 | **The Designer** | Understands the system before touching a pixel; ships taste, not decoration. |
 | **The Shipper** | Momentum over ceremony — small, verified steps that reach production. |
-| **The Auditor** | Assumes the code is guilty until proven correct. |
+| **The Auditor** | Assumes the code is guilty until proven correct; hunts the input that breaks it. |
 | **The Researcher** | Chases evidence, not vibes; separates what's known from what's guessed. |
 | **The Strategist** | Turns a messy problem into one decision and a reason to believe it. |
 

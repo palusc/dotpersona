@@ -189,7 +189,12 @@ stack:   [ Architect ] ◄─consults─ ( Auditor )          (one voice, judgme
 persona/
 ├── SKILL.md                      # the engine: invocation grammar, lifecycle, core rules
 ├── personas/                     # the roster — source of truth, read at runtime
-│   └── the-designer.md           # one file per persona (more ship over time)
+│   ├── the-architect.md          # one file per persona (more ship over time)
+│   ├── the-designer.md
+│   ├── the-shipper.md
+│   ├── the-auditor.md
+│   ├── the-researcher.md
+│   └── the-strategist.md
 ├── templates/
 │   └── PERSONA.template.md        # scaffold for /persona new
 └── docs/
@@ -199,9 +204,9 @@ persona/
 
 Note the **folder is the source of truth**: the engine always reads the live `personas/*.md`
 frontmatter at runtime rather than trusting any hard-coded list (`SKILL.md` → *Roster*). The
-Roster table in `SKILL.md` documents the intended team, but disk is authoritative — currently
-`the-designer.md` is the only persona checked in, and users drop their own files into
-`personas/` to extend the team with zero engine changes.
+Roster table in `SKILL.md` documents the shipped team, but disk is authoritative — six personas
+ship today, and users drop their own files into `personas/` to extend the team with zero engine
+changes.
 
 **Two resolution paths the engine relies on:**
 
