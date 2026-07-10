@@ -70,9 +70,16 @@ for f in "${files[@]}"; do
   fi
 
   # persona slug must match filename/foldername
-  slug="$(grep -E '^persona:' <<<"$fm" | head -1 | sed 's/^persona:[[:space:]]*//')"
+  slug="$(grep -E '^persona:' <<<"$fm" | head -1 | awk '{print $2}')"
   if [[ -n "$slug" && "$slug" != "$base" ]]; then
     errs+=("persona slug '$slug' != expected name '$base'")
+  fi
+
+  # version: must be SemVer. scripts/check-version-bump.sh relies on being able to
+  # sort -V these, and `/persona list` shows them to users.
+  ver="$(grep -E '^version:' <<<"$fm" | head -1 | awk '{print $2}')"
+  if [[ -n "$ver" && ! "$ver" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    errs+=("version '$ver' is not SemVer (expected MAJOR.MINOR.PATCH)")
   fi
 
   for sec in "${REQUIRED_SECTIONS[@]}"; do
@@ -95,8 +102,8 @@ echo
 # The DBA, The Tester, and The Wordsmith shipped but were never added to
 # plugin.json, silently breaking installs via the plugin marketplace path.
 if [[ -f "$ROOT/plugin.json" ]]; then
-  manifest_skills="$(jq -r '.skills[]' "$ROOT/plugin.json" | sort)"
-  disk_skills="$(cd "$ROOT" && ls skills/*/SKILL.md | sort)"
+  manifest_skills="$(jq -r '.skills[]' "$ROOT/plugin.json" | LC_ALL=C sort)"
+  disk_skills="$(cd "$ROOT" && find skills -mindepth 2 -maxdepth 2 -name SKILL.md | LC_ALL=C sort)"
 
   missing="$(comm -23 <(echo "$disk_skills") <(echo "$manifest_skills"))"
   stale="$(comm -13 <(echo "$disk_skills") <(echo "$manifest_skills"))"
@@ -104,15 +111,28 @@ if [[ -f "$ROOT/plugin.json" ]]; then
   if [[ -n "$missing" ]]; then
     FAIL=1
     echo "✗ plugin.json is missing skills that exist on disk:"
-    sed 's/^/    - /' <<<"$missing"
+    awk '{print "    - " $0}' <<<"$missing"
   fi
   if [[ -n "$stale" ]]; then
     FAIL=1
     echo "✗ plugin.json lists skills that no longer exist on disk:"
-    sed 's/^/    - /' <<<"$stale"
+    awk '{print "    - " $0}' <<<"$stale"
   fi
   if [[ -z "$missing" && -z "$stale" ]]; then
     echo "✓ plugin.json matches skills/ on disk."
+  fi
+
+  # Release hygiene: whatever version plugin.json claims must be a real, released
+  # heading in CHANGELOG.md. Catches a manifest bump that never got written up, and a
+  # changelog entry whose release was never actually shipped in the manifest.
+  plugin_version="$(jq -r '.version' "$ROOT/plugin.json")"
+  if [[ -f "$ROOT/CHANGELOG.md" ]]; then
+    if grep -qE "^## \[${plugin_version//./\\.}\]" "$ROOT/CHANGELOG.md"; then
+      echo "✓ plugin.json version $plugin_version has a CHANGELOG entry."
+    else
+      FAIL=1
+      echo "✗ plugin.json is at version $plugin_version, but CHANGELOG.md has no '## [$plugin_version]' heading."
+    fi
   fi
 fi
 

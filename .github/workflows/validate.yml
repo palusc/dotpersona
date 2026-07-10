@@ -1,16 +1,94 @@
-name: validate personas
+name: validate
+
+# No `paths:` filter on purpose. These jobs guard against drift between files
+# (plugin.json ↔ skills/, CHANGELOG ↔ plugin.json, roster table ↔ disk), and a
+# path filter is exactly how such a guard silently stops running.
 
 on:
   push:
     branches: [main]
-    paths: ['skills/**', 'custom-personas/**', 'scripts/**', 'plugin.json', '.github/workflows/validate.yml']
   pull_request:
-    paths: ['skills/**', 'custom-personas/**', 'templates/**', 'scripts/**', 'plugin.json']
+
+permissions:
+  contents: read
 
 jobs:
   schema:
+    name: persona schema & manifest
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Validate persona schema
         run: bash scripts/validate-personas.sh
+
+  shellcheck:
+    name: shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ensure shellcheck is available
+        run: |
+          if ! command -v shellcheck >/dev/null 2>&1; then
+            sudo apt-get update && sudo apt-get install -y shellcheck
+          fi
+          shellcheck --version
+      - name: Lint every shell script we ship
+        run: shellcheck --severity=style --shell=bash install.sh scripts/*.sh
+
+  version-bump:
+    name: persona version bump
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: A changed persona must bump its version
+        run: bash scripts/check-version-bump.sh "origin/${{ github.base_ref }}"
+
+  export:
+    name: portable export
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Every persona exports to every target
+        run: |
+          set -euo pipefail
+          expected="$(find skills -mindepth 1 -maxdepth 1 -type d ! -name persona | wc -l)"
+
+          bash scripts/persona-export.sh --all --target json \
+            | jq -e --argjson n "$expected" 'length == $n and all(.[]; .system | length > 500)' >/dev/null
+          echo "✓ json: $expected personas, all with a non-trivial system prompt"
+
+          bash scripts/persona-export.sh --all --target cursor >/dev/null
+          test "$(find .cursor/rules -name '*.mdc' | wc -l)" -eq "$expected"
+          echo "✓ cursor: $expected rule files"
+
+          bash scripts/persona-export.sh --all --target agents >/dev/null
+          bash scripts/persona-export.sh --all --target agents >/dev/null
+          test "$(grep -c 'persona:start' AGENTS.md)" -eq 1
+          echo "✓ agents: re-export replaces the block instead of duplicating it"
+
+  installer:
+    name: installer dry-run
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: --dry-run must not touch the filesystem
+        run: |
+          set -euo pipefail
+          target="$RUNNER_TEMP/skills"
+          CLAUDE_SKILLS_DIR="$target" bash install.sh --dry-run
+          if [ -e "$target" ]; then
+            echo "✗ --dry-run created $target" >&2
+            exit 1
+          fi
+          echo "✓ nothing was written"
+
+          CLAUDE_SKILLS_DIR="$target" bash install.sh
+          test -L "$target/the-auditor"
+          echo "✓ a real install links the roster"
+
+          CLAUDE_SKILLS_DIR="$target" bash install.sh --uninstall
+          test ! -e "$target/the-auditor"
+          echo "✓ uninstall removes it again"

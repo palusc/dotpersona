@@ -5,7 +5,7 @@
 <br/>
 <br/>
 
-[![validate-personas](https://github.com/palusc/dotpersona/actions/workflows/validate.yml/badge.svg)](https://github.com/palusc/dotpersona/actions/workflows/validate.yml)
+[![validate](https://github.com/palusc/dotpersona/actions/workflows/validate.yml/badge.svg)](https://github.com/palusc/dotpersona/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Latest Release](https://img.shields.io/github/v/release/palusc/dotpersona?color=brightgreen)](https://github.com/palusc/dotpersona/releases)
 [![Language](https://img.shields.io/badge/language-Shell-orange.svg)](https://github.com/palusc/dotpersona)
@@ -35,15 +35,38 @@ Every new Claude Code session starts with a blank slate. If you want specialized
 
 Persona solves this by **packaging** specialized mindsets into modular, schema-validated, local markdown files. You summon only the expert you need, when you need them.
 
+## Who is this for?
+
+**This is for you if:**
+
+- You use Claude Code daily and keep re-typing *"review this like a security engineer."*
+- Your `CLAUDE.md` has grown into a pile of rules that quietly contradict each other.
+- You want a review that names the bug that loses money — not the missing semicolon next to it.
+- You want the same expert to behave the same way next Tuesday, and to be able to prove it.
+
+**This is not for you if:**
+
+- You want faster autocomplete. Persona changes *judgment*, not keystrokes.
+- You want a personality skin. Every persona here has to change the *output* or it doesn't get merged — that's the [merge bar](CONTRIBUTING.md#what-makes-a-persona-get-merged).
+- You don't use Claude Code. You can still take the personas with you — see [Beyond Claude Code](#beyond-claude-code) — but `/persona` auto-routing and stacking won't come along.
+
 ## Quick Install
 
-Run this one-liner to link all experts into `~/.claude/skills`:
+See exactly what it would do first. `--dry-run` clones into a temp directory, prints its plan, and deletes it again — nothing under `$HOME` is touched:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/palusc/dotpersona/main/install.sh | bash -s -- --dry-run
+```
+
+Happy with the plan? Drop the flag:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/palusc/dotpersona/main/install.sh | bash
 ```
 
 Open Claude Code and type `/persona`.
+
+Everything is a symlink into `~/.claude/skills`, so `/persona update` (or `git pull`) keeps you current. `./install.sh --uninstall` removes every link. Existing folders are never overwritten — they're moved to `<name>.backup.<pid>` first.
 
 ---
 
@@ -81,6 +104,8 @@ The bug that actually loses money — the concurrent double-spend — is the fif
 /persona auditor index.js   # Adopt the Auditor and immediately review index.js
 /persona + auditor          # Stack: consult the Auditor while keeping your primary expert
 /persona remote owner/slug  # Install a community persona from the dotpersona.dev registry
+/persona new                # Forge your own via a guided interview
+/persona update             # Pull the latest personas and link any new ones
 /persona off                # Return to default Claude
 ```
 
@@ -105,6 +130,41 @@ Every persona holds a unique **mindset, method, quality bar, and voice** tailore
 | ♟️ **[The Strategist](skills/the-strategist/SKILL.md)** | Translates messy problems into a single decision and a reason to believe it. | Opens with one recommendation and names what we're explicitly *not* doing — never "it depends." |
 | 🎯 **[The Product Manager](skills/the-product-manager/SKILL.md)** | Turns a vague feature request into a spec so precise two engineers would build the same thing. | Refuses to hand off a story with no acceptance criteria — "should feel intuitive" isn't a test. |
 
+More are coming, and the roster is hired by the community — see the [Roadmap](ROADMAP.md) and [Contributing](CONTRIBUTING.md).
+
+---
+
+## How it works
+
+Persona routes on the files in front of you. There is no central registry to keep in sync.
+
+```
+   [ /persona command ]
+           │
+           ├──> Inspect current workspace files (active file / git diff)
+           ├──> Match file extensions and names against each persona's `triggers`
+           ├──> Adopt the best fit (Identity, Operating Principles, Method, Definition of Done)
+           │
+       [ Operate Phase ]
+           ├──> Check ~/.claude/skills/ for the skills this persona declares
+           └──> Run the Method, gate the answer on the Definition of Done
+```
+
+1. **Indexing.** The engine reads the `triggers` list from the YAML frontmatter of every `skills/*/SKILL.md` and `custom-personas/*.md`.
+2. **Trigger matching.** An active `schema.sql` matches `sql` and `schema` → The DBA. A `.css` file → The Designer. CI reports any trigger claimed by two personas so ambiguous routing gets noticed in review — a soft overlap resolved by `consults` is legitimate, so it's surfaced, not failed.
+3. **Adoption.** The chosen file is read into context (surviving compaction), and Claude works through its Method, refusing to finish until the Definition of Done is met.
+4. **Graceful degradation.** A persona *references* skills but never vendors them. If a declared skill is missing, the persona falls back to its embedded method and does the work by hand. It never hard-fails or asks you to install something first.
+
+Deeper mechanics: [`docs/how-it-works.md`](docs/how-it-works.md). The file format: [`docs/persona-schema.md`](docs/persona-schema.md).
+
+### Why the installer is boring on purpose
+
+* **Fail-fast:** `set -euo pipefail`, so a half-configured state can't happen.
+* **Non-destructive:** an existing `~/.claude/skills/<name>` is moved to `<name>.backup.<pid>`, never overwritten or deleted.
+* **Update-safe customization:** your own personas live in `custom-personas/`, which is gitignored — no merge conflicts on `git pull`.
+* **Deterministic updates:** `/persona update` is a `--ff-only` pull. It shows you what changed and never rewrites local state.
+* **Inspectable:** `--dry-run` prints the full plan and writes nothing, including over `curl | bash`.
+
 ---
 
 ## Why Persona? (Comparison)
@@ -114,7 +174,8 @@ Every persona holds a unique **mindset, method, quality bar, and voice** tailore
 | **Routability** | ❌ None | ❌ Manual copy-paste | ❌ None | **✅ Auto-routed** based on current workspace files |
 | **Composition** | ❌ Mixed context | ❌ Manual stacking | ❌ None | **✅ Stackable** (`/persona + auditor`) and switchable |
 | **Graceful Degradation** | ❌ N/A | ❌ N/A | ❌ Hard error if missing | **✅ Falls back** to manual process if skill is missing |
-| **Validation & Schema** | ❌ None | ❌ None | ❌ None | **✅ Schema-enforced** (`docs/persona-schema.md`) structure |
+| **Validation & Schema** | ❌ None | ❌ None | ❌ None | **✅ Schema-enforced** (`docs/persona-schema.md`), CI-verified |
+| **Versioned behavior** | ❌ None | ❌ None | ❌ Rarely | **✅ SemVer** per persona; CI rejects a change that doesn't bump it |
 | **Opinionated Mindsets** | ❌ Conversational | ❌ Vague generalists | ❌ Verbs only (tools) | **✅ High-judgment** senior specialist roles (minds) |
 
 ---
@@ -183,81 +244,77 @@ Here is how different personas respond to specific developer scenarios in your w
 
 ---
 
-<details>
-<summary>⚙️ <b>Architecture & Auto-Routing Flow</b></summary>
+## Beyond Claude Code
 
-Persona uses dynamic file routing to select the best expert without relying on hardcoded centralized registries.
+A persona is a markdown file, not a Claude Code feature. `scripts/persona-export.sh` reshapes any of them for wherever you actually work:
 
-#### How it works:
-1. **Invocation:** When you type `/persona` inside Claude Code, the system checks the files in your current workspace active file or git diff.
-2. **Indexing:** The engine reads the `triggers` list from the YAML frontmatter of all `skills/*/SKILL.md` and `custom-personas/*.md` files.
-3. **Trigger Matching:** If your active file is `schema.sql`, it matches triggers like `sql` or `schema` to load the `dba` persona. If it's a CSS file, it loads the `designer` persona.
-4. **Adoption:** The engine reads the chosen persona file using `view_file` (retaining it in memory even during context compaction), adopts its mindset (Identity, Operating Principles), and executes its sequential process (Method, DoD).
-
-```
-   [ /persona command ]
-           │
-           ├──> Inspect current workspace files (Active file / Git diff)
-           ├──> Match file extensions/names to triggers (e.g. `.sql` -> `dba`)
-           ├──> Adopt best-fit persona (Identity, Method, DoD)
-           │
-       [ Operate Phase ]
-           ├──> Check ~/.claude/skills/ for declared skills (verbs)
-           └──> Run Method steps, gate quality on Definition of Done
+```bash
+scripts/persona-export.sh --list                   # who's on the roster
+scripts/persona-export.sh auditor | pbcopy         # paste into Claude.ai or ChatGPT
+scripts/persona-export.sh auditor --target json    # {"system": …} for the Messages API
+scripts/persona-export.sh --all --target cursor    # → .cursor/rules/*.mdc
+scripts/persona-export.sh --all --target agents    # → AGENTS.md (Codex, Zed, Amp, …)
 ```
 
-#### Robust Script Logic & Installer Safety
+The export carries the identity, the method, the quality bar, the voice — and the degradation contract, so a persona that names a Claude Code skill it can't reach does the work by hand instead of stalling.
 
-Since Persona is implemented directly on top of Claude Code's local capabilities, the installer is designed with strict system safety conventions:
-* **Fail-Fast Shell Execution:** The installer is locked down with `set -euo pipefail` to guarantee any execution error halts the script instantly, preventing partially configured states.
-* **Non-Destructive Backups:** Before linking any skill to `~/.claude/skills/`, the script checks for existing files. If a custom folder already exists, it is renamed to a backup (`<name>.backup.<pid>`) rather than deleted or overwritten.
-* **Conflict-Free Customizations:** User-created personas are written to `custom-personas/` which is globally ignored in `.gitignore`. This keeps custom experts update-safe and free from upstream merge conflicts.
-* **Deterministic Updates:** The `/persona update` engine uses standard, clean Fast-Forward (`--ff-only`) git updates, showing exactly what changed from `CHANGELOG.md` without modifying local state.
-</details>
+What doesn't travel: auto-routing, stacking, and `/persona update`. Everywhere but Claude Code, you pick the expert yourself. Full trade-off table and an API example: [`docs/portability.md`](docs/portability.md).
 
-<details>
-<summary>🛠️ <b>Build Your Own Expert</b></summary>
+---
 
-Persona includes a **Persona Forge** guided interview to let you draft your own update-safe custom personas:
+## Build your own expert
 
 ```bash
 /persona new
 ```
 
-This interviews you and generates a custom persona markdown file under `custom-personas/` using a strict schema constraint. You can then link and submit your persona back to the community via a pull request.
-</details>
+Persona Forge interviews you and writes an update-safe persona to `custom-personas/` against the same schema the official roster obeys. `custom-personas/` is gitignored, so your experts survive every `git pull`. When one turns out to be good, [send it back as a PR](CONTRIBUTING.md) — your handle goes on it.
 
-<details>
-<summary>🔄 <b>Self-Updates</b></summary>
+Start from [`templates/PERSONA.template.md`](templates/README.md) if you'd rather write it by hand.
 
-The installer clones the repository to `~/.dotpersona`. Inside Claude Code, typing `/persona update` automatically pulls the latest improvements and symlinks any newly added community experts.
-</details>
+---
 
-<details>
-<summary>⚡ <b>Graceful Degradation</b></summary>
+## Current limitations
 
-A persona *references* skills (verbs) but does not vendor them. If a referenced skill is missing from your system, the persona falls back to its embedded method to solve the task manually. It never breaks your session or requests you to install dependencies before helping.
-</details>
+Worth knowing before you install:
 
-<details>
-<summary>⚠️ <b>Current Limitations & Constraints</b></summary>
+* **Session rollbacks.** `/persona off` asks Claude to return to normal behavior, but the adopted instructions remain in your conversation history. For a genuinely clean slate, start a new session.
+* **Stack no more than two.** `/persona + <name>` composes experts, but past two you get context bloat and competing instructions. The engine warns you; it doesn't stop you.
+* **Claude Code is the only first-class host.** Auto-routing depends on `~/.claude/skills/`. Other CLIs work only via [export](#beyond-claude-code), and lose routing and stacking.
+* **Personas are prompts, not guarantees.** The Auditor finds bugs far more reliably than plain Claude. It is not a static analyzer, and it does not replace one.
+* **Community personas are code you run.** `/persona remote <owner>/<slug>` fetches instructions Claude will follow. The engine shows you the name, essence, and owner and asks before adopting. The registry validates schema *shape*, not *safety* — read the thing before you say yes.
 
-To help you get the most out of Persona, keep the following constraints in mind:
+---
 
-* **Session Rollbacks:** Since Persona operates within your chat session history, running `/persona off` asks Claude to return to normal behavior, but the instructions remain in your history. For a completely clean slate, start a new terminal session.
-* **Stacking Limit:** You can stack multiple experts using `/persona + <name>` (e.g., stacking the auditor on top of the architect). However, we recommend a **maximum stack of 2 personas** to avoid context bloat and competing instructions.
-* **CLI Dependencies:** Persona is designed specifically for Anthropic's **Claude Code** skill resolution directories (`~/.claude/skills/`). It does not work automatically with other CLI interfaces like Aider or Copilot CLI without manual path configurations.
-</details>
+## Repository map
 
-<details>
-<summary>📚 <b>Documentation Index</b></summary>
+```
+dotpersona/
+├── skills/              the roster — one folder per persona, plus the engine
+│   ├── persona/         the engine: routing, adoption, stacking, Persona Forge
+│   └── the-*/           one SKILL.md per expert — the whole mind, in one file
+├── custom-personas/     your own experts (gitignored, survives `git pull`)
+├── templates/           PERSONA.template.md — the blank a new persona starts from
+├── scripts/             validate-personas.sh · check-version-bump.sh · persona-export.sh
+├── docs/                schema · tutorial · before/after proof · portability
+├── .github/workflows/   schema · shellcheck · version bump · export · installer dry-run
+└── install.sh           symlink · copy · update · uninstall · dry-run
+```
+
+Every script is `shellcheck`-clean at `--severity=style` and runs in CI on every push.
+
+---
+
+## Documentation
 
 - 🧠 **[How it works](docs/how-it-works.md)** — The engine, lifecycle, and routing mechanics.
-- 🧪 **[Before/After Proof](docs/before-after.md)** — See `/persona auditor` catch double-spends that default Claude misses.
-- 📐 **[Schema Contract](docs/persona-schema.md)** — The strict markdown layout every persona follows.
-- ✍️ **[Tutorial: Creating a Persona](docs/creating-a-persona.md)** — Step-by-step guide to authoring.
+- 🧪 **[Before/After proof](docs/before-after.md)** — `/persona auditor` catching a double-spend default Claude misses.
+- 📐 **[Schema contract](docs/persona-schema.md)** — The strict markdown layout every persona follows.
+- ✍️ **[Creating a persona](docs/creating-a-persona.md)** — Step-by-step authoring guide.
+- 🌍 **[Portability](docs/portability.md)** — Using personas in Claude.ai, the API, Cursor, or AGENTS.md.
+- 🧩 **[Recommended skills](docs/recommended-skills.md)** — The community skills personas orchestrate.
+- 📡 **[Remote registry](docs/remote-registry.md)** — The `/persona remote` client↔registry contract.
 - 🤝 **[Contributing](CONTRIBUTING.md)** · 🗺️ **[Roadmap](ROADMAP.md)** · 📓 **[Changelog](CHANGELOG.md)**
-</details>
 
 ---
 

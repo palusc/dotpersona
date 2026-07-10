@@ -222,9 +222,14 @@ persona/
 ├── templates/
 │   └── PERSONA.template.md        # scaffold for /persona new
 ├── custom-personas/               # user custom-created personas (added to .gitignore)
+├── scripts/
+│   ├── validate-personas.sh       # schema, slug, SemVer, manifest & roster sync (CI)
+│   ├── check-version-bump.sh      # a changed persona must bump its version: (CI)
+│   └── persona-export.sh          # export a persona outside Claude Code
 └── docs/
     ├── persona-schema.md          # the PERSONA.md / SKILL.md contract
     ├── remote-registry.md         # the /persona remote client↔registry contract
+    ├── portability.md             # using a persona in Claude.ai, the API, Cursor, AGENTS.md
     └── how-it-works.md            # this document
 ```
 

@@ -13,7 +13,14 @@ This roadmap is a promise *and* an invitation: if you want one of these sooner, 
 
 - ✅ The DBA · The Tester · The Wordsmith · The Product Manager
 
-## Next — v1.2 (the domain leads)
+## Shipped — v1.2 (personas leave home)
+
+- ✅ **Portable export** — `scripts/persona-export.sh` reshapes any persona for Claude.ai, the
+  Messages API, Cursor rules, or `AGENTS.md`. Trade-offs: [`docs/portability.md`](docs/portability.md).
+- ✅ **`install.sh --dry-run`** — read the installer's plan before you run it, even over `curl`.
+- ✅ **Versioned behavior** — CI rejects a persona change that doesn't bump its SemVer `version:`.
+
+## Next — v1.3 (the domain leads)
 
 Role personas answer *how do I work*. Domain leads answer *what do I know deeply*.
 
@@ -22,7 +29,7 @@ Role personas answer *how do I work*. Domain leads answer *what do I know deeply
 - ⏳ **The Data Lead** — pipelines, schemas, correctness of numbers, "is this metric even right".
 - ⏳ **The DevOps Lead** — deploys, observability, rollbacks, the 3am-pager mindset.
 
-## Later — v1.3+ (the specialists)
+## Later — v1.4+ (the specialists)
 
 - 🔭 **The Growth Hacker** — funnels, activation, the one metric that matters.
 - 🔭 **The Copywriter** — words that convert; cuts your paragraph in half and it's better.

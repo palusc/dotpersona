@@ -6,7 +6,39 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versions fol
 
 ## [Unreleased]
 
+## [1.2.0] — 2026-07-10
+
+Personas leave home. A persona was always just markdown, but until now you needed Claude Code
+to get anything out of one. This release makes that literal: export any persona as a system
+prompt, a JSON payload for the Messages API, a Cursor rule, or an `AGENTS.md` block. The
+mindset, method, and quality bar travel; the routing doesn't.
+
+The other half of this release is about trusting what you install and what you contribute:
+the installer can now show you its plan without touching a file, and CI stops a persona from
+changing its behavior without changing its version.
+
 ### Added
+- **`scripts/persona-export.sh`** — export any persona to `prompt` (stdout, for Claude.ai or
+  ChatGPT), `json` (`.system` for the Messages API), `cursor` (`.cursor/rules/*.mdc`), or
+  `agents` (an idempotent, marker-delimited block in `AGENTS.md`). `--all` does the whole
+  roster; `--list` shows it. The export carries the graceful-degradation contract, so a persona
+  that names a Claude Code skill it can't reach works from its embedded method instead of
+  stalling. Trade-offs and an API example: `docs/portability.md`.
+- **`install.sh --dry-run`** — prints exactly what would be created, moved, or deleted, and
+  writes nothing. It composes with the other modes (`--dry-run --uninstall`). Piped through
+  `curl`, it clones into a temp directory and deletes it again, so
+  `curl -fsSL … | bash -s -- --dry-run` never writes outside `/tmp`.
+- **`scripts/check-version-bump.sh`** — a persona's behavior is its contract. CI now fails a PR
+  where a `SKILL.md` changed but its `version:` didn't, or where the version moved backwards.
+  Brand-new personas pass. Answers the "every persona is pinned at 1.0.0 forever" problem.
+- **`shellcheck` in CI** over `install.sh` and every script in `scripts/`, at `--severity=style`.
+- **Two more CI guards**: the whole roster is exported to every portable target on every push
+  (including an assertion that re-running the `agents` target replaces its block rather than
+  duplicating it), and `install.sh --dry-run` is asserted to leave the filesystem untouched
+  before a real install/uninstall round-trip runs.
+- `scripts/validate-personas.sh` now rejects a non-SemVer `version:`, and checks that the
+  version in `plugin.json` has a matching `## [x.y.z]` heading in `CHANGELOG.md` — a manifest
+  bump can no longer ship without release notes.
 - `/persona remote <owner>/<slug>` — install a persona from the community registry at
   dotpersona.dev, save it to `custom-personas/`, and adopt it. The client↔registry contract
   lives in `docs/remote-registry.md`. Before adoption, the engine now shows the fetched
@@ -15,6 +47,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versions fol
   not *safety*.
 - `scripts/validate-personas.sh` now checks that `skills/persona/SKILL.md`'s own roster table
   lists every persona shipped on disk, the same class of check added for `plugin.json` in 1.1.1.
+- `docs/portability.md`, a real `templates/README.md`, and a README that answers *who is this
+  for* and *who is this not for* before it asks for an install.
+
+### Changed
+- The `validate` workflow lost its `paths:` filter. Its whole job is catching drift between
+  files, and a path filter is precisely how such a guard silently stops running.
+- README: architecture, graceful degradation, self-updates, limitations, and the docs index
+  came out from behind `<details>` and are now visible on the page. Added a repository map
+  and a **Who is this for?** section with an honest *not for you if* list.
+- `install.sh --help` prints only the header block instead of every `#` comment in the file.
 
 ### Fixed
 - `skills/persona/SKILL.md`'s roster table, `docs/recommended-skills.md`, and
@@ -24,6 +66,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versions fol
 - `docs/persona-schema.md` documented `name:` as a free-form display name (`The Designer`), but
   every shipped persona actually sets it to the kebab-case slug — Claude Code's skill loader
   keys the skill by that field. Doc now matches the 10 real files.
+- `scripts/validate-personas.sh` compared `plugin.json` against `ls skills/*/SKILL.md` under a
+  locale-dependent `sort`, which `comm` can disagree with. Now uses `find` and `LC_ALL=C sort`.
 
 ## [1.1.1] — 2026-07-10
 

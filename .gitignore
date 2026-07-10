@@ -2,3 +2,8 @@
 *.backup.*
 node_modules/
 custom-personas/
+
+# Artifacts of scripts/persona-export.sh when run from the repo root.
+# Export into YOUR project, not into this one.
+AGENTS.md
+.cursor/

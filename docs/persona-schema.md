@@ -15,7 +15,7 @@ name: the-designer             # official personas: must equal `persona:` — Cl
                                 # free-form display name instead.
 essence: >-                    # one line — the identity, shown in the roster
   Understands the system before touching a pixel; ships taste, not decoration.
-version: 1.0.0
+version: 1.0.0                 # SemVer, MAJOR.MINOR.PATCH — CI enforces a bump on every change
 author: persona                # or your GitHub handle
 skills:                        # skills this persona orchestrates (SOFT dependencies)
   - premium-website
@@ -39,6 +39,11 @@ triggers:                      # words/contexts that suit this persona (for rout
   persona can't work without.
 - `triggers` power `/persona` (no-arg) routing. Use plain words a user would type.
 - `consults` names personas, not skills. It's the persona's "who I'd ask" list.
+- `version` must be SemVer, and it must move whenever the file does. A persona's behavior is
+  its contract: two people running *the-auditor 1.0.0* should get the same review.
+  `scripts/check-version-bump.sh` fails a PR that changes a persona without bumping it, or
+  that moves the version backwards. Patch for wording, minor for a new principle or method
+  step, major for a persona that now draws a different line.
 
 ## Body (fixed section order)
 
