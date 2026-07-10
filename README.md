@@ -18,6 +18,8 @@
 
 ## The Pain: Why Persona exists
 
+I kept re-explaining the same thing to Claude every session — "review this like a security engineer," "now think like a DBA" — pasting the same 400-word prompt from a notes file I never fully trusted. Half the time I'd forget a rule I'd relied on last week, and the review would quietly miss what it missed before. I wanted the mindset to load on command and hold itself to a bar, without me re-typing it or dragging the whole thing into every conversation.
+
 Every new Claude Code session starts with a blank slate. If you want specialized guidelines, you have two choices:
 1. **Copy-paste massive, fragile system prompts** repeatedly for every new session.
 2. **Bloat a static `CLAUDE.md`** with conflicting rules (architecture, security, DB performance, styling) until the context is diluted, the agent gets confused, and responses slow down.
@@ -62,19 +64,19 @@ Here is a recording of `/persona` list and `/persona auditor` in action:
 
 ## The Roster
 
-Every persona holds a unique **mindset, method, quality bar, and voice** tailored to a specific developer role:
+Every persona holds a unique **mindset, method, quality bar, and voice** tailored to a specific developer role. The third column is what you'll actually see it do differently from plain Claude:
 
-| Role | Essence |
-|---|---|
-| 🏛️ **[The Architect](skills/the-architect/SKILL.md)** | Designs systems that survive contact with reality. |
-| 🎨 **[The Designer](skills/the-designer/SKILL.md)** | Understands the design system before touching a pixel; ships taste. |
-| 🚀 **[The Shipper](skills/the-shipper/SKILL.md)** | Momentum over ceremony — small, verified steps to production. |
-| 🔍 **[The Auditor](skills/the-auditor/SKILL.md)** | Assumes code is guilty until proven correct; hunts critical logic bugs. |
-| 🗄️ **[The DBA](skills/the-dba/SKILL.md)** | Profiles queries, handles composite indexing, designs zero-downtime migrations. |
-| 🧪 **[The Tester](skills/the-tester/SKILL.md)** | Hunts boundary edge-cases and writes robust test suites (Jest/Vitest/Playwright). |
-| ✍️ **[The Wordsmith](skills/the-wordsmith/SKILL.md)** | Refines developer docs, UI copy, and logs to be punchy and active. |
-| 📚 **[The Researcher](skills/the-researcher/SKILL.md)** | Chases evidence over vibes; separates what is known from guessed. |
-| ♟️ **[The Strategist](skills/the-strategist/SKILL.md)** | Translates messy problems into a single decision and a reason to believe it. |
+| Role | Essence | What's different |
+|---|---|---|
+| 🏛️ **[The Architect](skills/the-architect/SKILL.md)** | Designs systems that survive contact with reality. | Refuses to ship a design with no stated failure modes or rollback path — "it should work" isn't an architecture. |
+| 🎨 **[The Designer](skills/the-designer/SKILL.md)** | Understands the design system before touching a pixel; ships taste. | Justifies every shadow and border it keeps — decoration it can't explain gets cut. |
+| 🚀 **[The Shipper](skills/the-shipper/SKILL.md)** | Momentum over ceremony — small, verified steps to production. | Won't write "done" until it's watched the real flow run — green tests alone don't count. |
+| 🔍 **[The Auditor](skills/the-auditor/SKILL.md)** | Assumes code is guilty until proven correct; hunts critical logic bugs. | Tags each finding CONFIRMED or PLAUSIBLE with the exact input that breaks it — no repro, no report. |
+| 🗄️ **[The DBA](skills/the-dba/SKILL.md)** | Profiles queries, handles composite indexing, designs zero-downtime migrations. | Treats every query as a full-table scan until `EXPLAIN ANALYZE` says otherwise; migrations ship as expand/contract, never a blocking lock. |
+| 🧪 **[The Tester](skills/the-tester/SKILL.md)** | Hunts boundary edge-cases and writes robust test suites (Jest/Vitest/Playwright). | Writes more edge-case tests than happy-path ones on purpose — null, empty, concurrent, off-by-one. |
+| ✍️ **[The Wordsmith](skills/the-wordsmith/SKILL.md)** | Refines developer docs, UI copy, and logs to be punchy and active. | Cuts 20–30% of your words and hands back a before/after diff — "seamless" and "revolutionize" don't survive. |
+| 📚 **[The Researcher](skills/the-researcher/SKILL.md)** | Chases evidence over vibes; separates what is known from guessed. | Tags every claim with a confidence level and ships the "couldn't establish" section — no source, no claim. |
+| ♟️ **[The Strategist](skills/the-strategist/SKILL.md)** | Translates messy problems into a single decision and a reason to believe it. | Opens with one recommendation and names what we're explicitly *not* doing — never "it depends." |
 
 ---
 
