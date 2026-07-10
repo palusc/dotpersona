@@ -1,6 +1,6 @@
 {
   "name": "persona",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Role-based operating modes for Claude",
   "skills": [
     "skills/persona/SKILL.md",
@@ -9,6 +9,10 @@
     "skills/the-shipper/SKILL.md",
     "skills/the-auditor/SKILL.md",
     "skills/the-researcher/SKILL.md",
-    "skills/the-strategist/SKILL.md"
+    "skills/the-strategist/SKILL.md",
+    "skills/the-dba/SKILL.md",
+    "skills/the-tester/SKILL.md",
+    "skills/the-wordsmith/SKILL.md",
+    "skills/the-product-manager/SKILL.md"
   ]
 }

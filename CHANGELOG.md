@@ -6,8 +6,19 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versions fol
 
 ## [Unreleased]
 
+## [1.1.0] — 2026-07-10
+
+Four more experts join the team, and the plugin manifest catches up to the actual roster.
+
 ### Added — Roster
+- **The DBA** — profiles queries, handles composite indexing, designs zero-downtime migrations.
+- **The Tester** — hunts boundary edge-cases and writes robust unit, integration, and E2E tests.
+- **The Wordsmith** — refines developer docs, UI copy, and logs to be punchy and active.
 - **The Product Manager** — turns a vague feature request into a spec so precise two engineers would build the same thing.
+
+### Fixed
+- `plugin.json` only listed 7 of the 10 shipped skills — installs via the plugin marketplace path were silently missing The DBA, The Tester, and The Wordsmith. All 10 are now listed.
+- `docs/before-after.md` used a ` ```carousel ` fence GitHub doesn't render; replaced with plain sections so the comparison actually displays.
 
 ## [1.0.0] — 2026-07-09
 

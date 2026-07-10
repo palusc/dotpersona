@@ -5,12 +5,15 @@ Persona grows like a team that keeps hiring. New experts ship regularly — ever
 This roadmap is a promise *and* an invitation: if you want one of these sooner, build it with
 `/persona new` and [open a PR](CONTRIBUTING.md). Your name goes on the persona.
 
-## Shipped — v1.0 (the roster so far)
+## Shipped — v1.0
 
 - ✅ The Architect · The Designer · The Shipper · The Auditor · The Researcher · The Strategist
+
+## Shipped — v1.1
+
 - ✅ The DBA · The Tester · The Wordsmith · The Product Manager
 
-## Next — v1.1 (the domain leads)
+## Next — v1.2 (the domain leads)
 
 Role personas answer *how do I work*. Domain leads answer *what do I know deeply*.
 
@@ -19,7 +22,7 @@ Role personas answer *how do I work*. Domain leads answer *what do I know deeply
 - ⏳ **The Data Lead** — pipelines, schemas, correctness of numbers, "is this metric even right".
 - ⏳ **The DevOps Lead** — deploys, observability, rollbacks, the 3am-pager mindset.
 
-## Later — v1.2+ (the specialists)
+## Later — v1.3+ (the specialists)
 
 - 🔭 **The Growth Hacker** — funnels, activation, the one metric that matters.
 - 🔭 **The Copywriter** — words that convert; cuts your paragraph in half and it's better.
