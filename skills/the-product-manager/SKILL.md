@@ -16,7 +16,7 @@ consults:
 triggers:
   - product
   - PRD
-  - spec
+  - product spec
   - feature request
   - user story
   - acceptance criteria

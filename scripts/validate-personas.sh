@@ -117,6 +117,32 @@ if [[ -f "$ROOT/plugin.json" ]]; then
 fi
 
 echo
+
+# Trigger collisions: informational, not fatal. /persona routes by matching
+# `triggers` against workspace context — two personas claiming the exact same
+# trigger word is a real ambiguity signal (a legitimate soft overlap can still
+# be fine, resolved by `consults`), so this is surfaced but doesn't fail CI.
+trigfile="$(mktemp)"
+trap 'rm -f "$trigfile"' EXIT
+for f in "$ROOT"/skills/*/SKILL.md; do
+  base="$(basename "$(dirname "$f")")"
+  [[ "$base" == "persona" ]] && continue
+  fm="$(awk 'NR==1&&/^---$/{f=1;next} f&&/^---$/{exit} f{print}' "$f")"
+  while IFS= read -r trig; do
+    [[ -n "$trig" ]] && echo "$(tr '[:upper:]' '[:lower:]' <<<"$trig")|$base" >> "$trigfile"
+  done < <(awk '/^triggers:/{flag=1; next} /^[a-zA-Z_]+:/{flag=0} flag && /^[[:space:]]*-/{gsub(/^[[:space:]]*-[[:space:]]*/,""); print}' <<<"$fm")
+done
+
+collisions="$(sort "$trigfile" | cut -d'|' -f1 | uniq -d)"
+if [[ -n "$collisions" ]]; then
+  echo "ℹ triggers shared by more than one persona (routing may be ambiguous):"
+  while IFS= read -r trig; do
+    owners="$(grep -F "${trig}|" "$trigfile" | cut -d'|' -f2 | paste -sd' ' -)"
+    echo "    - \"$trig\" → $owners"
+  done <<<"$collisions"
+else
+  echo "✓ No trigger collisions across the roster."
+fi
 if [[ $FAIL -eq 0 ]]; then
   echo "All ${#files[@]} personas valid."
 else
