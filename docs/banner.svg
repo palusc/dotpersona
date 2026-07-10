@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 340" width="1200" height="340" role="img" aria-label="Persona for Claude Code — turn Claude Code into a team of senior specialists">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" width="1200" height="400" role="img" aria-label="Persona for Claude Code — turn Claude Code into a team of senior specialists">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#0b0f19"/>
@@ -20,10 +20,10 @@
   </defs>
 
   <!-- backdrop -->
-  <rect width="1200" height="340" rx="20" fill="url(#bg)"/>
-  <rect x="1" y="1" width="1198" height="338" rx="19" fill="none" stroke="#8b5cf6" stroke-opacity="0.14"/>
+  <rect width="1200" height="400" rx="20" fill="url(#bg)"/>
+  <rect x="1" y="1" width="1198" height="398" rx="19" fill="none" stroke="#8b5cf6" stroke-opacity="0.14"/>
   <circle cx="1020" cy="70" r="300" fill="url(#glow)"/>
-  <circle cx="150" cy="330" r="260" fill="url(#glow2)"/>
+  <circle cx="150" cy="390" r="260" fill="url(#glow2)"/>
 
   <!-- faint terminal-chevron watermark -->
   <g stroke="#243050" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.55">
@@ -44,9 +44,11 @@
   <!-- divider -->
   <rect x="74" y="258" width="1052" height="1.5" fill="#1e2740"/>
 
-  <!-- roster (two left-aligned rows — short enough to fit any font substitution) -->
+  <!-- roster (four left-aligned rows — short enough to fit any font substitution) -->
   <g font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="19" fill="#7d8aa3" letter-spacing="0.5">
-    <text x="74" y="294">Architect&#160;·&#160;Designer&#160;·&#160;Shipper&#160;·&#160;Auditor&#160;·&#160;DBA&#160;·&#160;Tester</text>
-    <text x="74" y="322">Wordsmith&#160;·&#160;Researcher&#160;·&#160;Strategist&#160;·&#160;Product Manager</text>
+    <text x="74" y="294">Architect&#160;·&#160;Designer&#160;·&#160;Shipper&#160;·&#160;Auditor&#160;·&#160;DBA</text>
+    <text x="74" y="322">Tester&#160;·&#160;Wordsmith&#160;·&#160;Researcher&#160;·&#160;Strategist&#160;·&#160;Product Manager</text>
+    <text x="74" y="350">Backend Lead&#160;·&#160;Frontend Lead&#160;·&#160;Data Lead&#160;·&#160;DevOps Lead</text>
+    <text x="74" y="378">Growth Hacker&#160;·&#160;Copywriter&#160;·&#160;Legal Reviewer&#160;·&#160;Interviewer&#160;·&#160;Teacher</text>
   </g>
 </svg>

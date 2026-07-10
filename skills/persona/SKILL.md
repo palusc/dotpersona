@@ -33,6 +33,8 @@ Persona definitions live in `skills/*/SKILL.md` (official) and `custom-personas/
 | `/persona remote <ID>` | Install a persona from the public registry (dotpersona.dev) by its `<owner>/<slug>` ID, save it to `custom-personas/<slug>.md`, then adopt it immediately (see **Remote install** below). |
 | `/persona update` | Run `./install.sh --update` and output the result. Do **not** fabricate/hallucinate any update changelog if the repository was already up to date or the command failed. |
 | `/persona + <name>` | **Stack**: keep the current persona as primary; it may *consult* `<name>` for that persona's domain. |
+| `/persona + <name1> + <name2> …` | **Panel stack**: convene several consultants at once on one specific decision; primary stays in charge and synthesizes (see **Switching & stacking**). |
+| `/persona team <preset>` | Summon a **named squad** — an ordered sequence of personas for a common project shape — and work through it phase by phase (see **Team presets**). `/persona team <a>+<b>+<c>` defines an ad-hoc squad inline. |
 | `/persona off` | Drop the persona; return to default Claude. *Note: this asks Claude to ignore the persona instructions. However, because the text remains in Claude's context history, it is a request for compliance, not a physical erasure. For a clean slate, start a new session.* |
 | "be a designer", "act as an architect", … | Treat as `/persona <role>` — match intent to the closest persona. |
 
@@ -40,11 +42,14 @@ Persona definitions live in `skills/*/SKILL.md` (official) and `custom-personas/
 
 To build the roster, read the YAML frontmatter of every file in:
 1. `skills/*/SKILL.md` (excluding `skills/persona/SKILL.md`)
-2. `custom-personas/*.md`
+2. `.persona/*.md` in the current project's working directory, if present (per-project personas — see **Per-project personas**)
+3. `custom-personas/*.md` (this plugin's own personal, gitignored personas)
 
 Do **not** dump full files — only the one-line essence.
 Prefer a direct tool to read files; fall back to:
-`for f in skills/*/SKILL.md custom-personas/*.md; do [[ "$f" == *"skills/persona/SKILL.md" ]] && continue; [ -f "$f" ] && sed -n '/^---$/,/^---$/p' "$f"; done`
+`for f in skills/*/SKILL.md .persona/*.md custom-personas/*.md; do [[ "$f" == *"skills/persona/SKILL.md" ]] && continue; [ -f "$f" ] && sed -n '/^---$/,/^---$/p' "$f"; done`
+
+If a slug is defined in more than one location, resolve **official → per-project → personal** — a project's own committed persona wins over a same-named personal one, since the project's intent is the shared, reviewed one.
 
 ---
 
@@ -52,7 +57,7 @@ Prefer a direct tool to read files; fall back to:
 
 1. **Read the full persona definition.**
    - If adopting an official persona `<name>`, read its skill file `skills/<name>/SKILL.md` using `view_file` with `IsSkillFile: true` so the system registers it as an invoked skill (preserving it across context compaction).
-   - If adopting a custom persona `<name>`, read `custom-personas/<name>.md` using `view_file` (set `IsSkillFile: false`).
+   - If adopting a custom or per-project persona `<name>`, read `custom-personas/<name>.md` or `.persona/<name>.md` using `view_file` (set `IsSkillFile: false`) — both resolve identically, only the folder differs.
    - Internalize *Identity*, *Operating Principles*, *Method*, and *Definition of Done*. From now on, these override generic behavior.
 2. **Check its skills.** For each skill under `skills:`, note whether it exists in the
    environment (a skill named `X` is present if `~/.claude/skills/X/SKILL.md` exists, or
@@ -82,7 +87,15 @@ Prefer a direct tool to read files; fall back to:
   second only for its domain — e.g. *The Architect* stacking *+ the-auditor* to pressure-test
   a design for security. Keep one voice (the primary's); fold the consultant's judgment in.
   *The primary persona's Definition of Done remains binding, but the consultant's domain-specific requirements must be met to pass it.*
-- A persona's `consults:` list names the personas it naturally reaches for. Honor it.
+- **Panel stack** (`/persona + <a> + <b> …`): convene *more than one* consultant at once, but
+  scoped to **one specific decision**, not the whole task — e.g. *The Architect* stacking
+  `+ the-auditor + the-dba` to pressure-test one schema-and-security call before committing to
+  it. Pose each consultant the same narrow question, gather their domain judgment, then the
+  primary **synthesizes and speaks in one voice** — a panel briefs the primary, it never becomes
+  a multi-narrator group chat. If the decision is broad enough to need three consultants on
+  everything, that's a sign to switch instead of stack.
+- A persona's `consults:` list names the personas it naturally reaches for. Honor it — panel
+  members are usually drawn from there first.
 
 ---
 
@@ -102,6 +115,57 @@ Keep it fast: ask only what you cannot infer.
 Then write `custom-personas/<slug>.md` using `templates/PERSONA.template.md` as a guide, matching the exact
 section order and tone of the official personas (see `docs/persona-schema.md` for the spec).
 Offer to open a PR so the community gets it too (see `CONTRIBUTING.md`).
+
+---
+
+## Team presets — `/persona team <preset>`
+
+A preset is a named, ordered squad suited to a common project shape — summon the right team in
+one command instead of switching manually persona by persona.
+
+Built-in presets (ordered personas, run phase by phase, each handing off to the next):
+
+| Preset | Squad |
+|---|---|
+| `saas-launch` | The Strategist → The Product Manager → The Architect → The Backend Lead → The Frontend Lead → The Designer → The Shipper |
+| `api-service` | The Architect → The Backend Lead → The DBA → The Tester → The DevOps Lead |
+| `landing-page` | The Strategist → The Copywriter → The Designer → The Shipper |
+| `data-pipeline` | The Data Lead → The DBA → The DevOps Lead |
+| `audit` | The Auditor → The Legal Reviewer → The DevOps Lead |
+
+1. Confirm the preset — or, for an ad-hoc squad (`/persona team <a>+<b>+<c>`), the literal list
+   given — and announce the full lineup in one line before starting.
+2. Adopt the first persona and work its Method to completion, or to the point the user redirects.
+3. Hand off to the next persona in the squad with the normal one-line switch announcement — a
+   squad is just a scripted sequence of ordinary switches, not a new adoption mechanism.
+4. The user can skip ahead (`/persona <name>` mid-squad) or drop the squad (`/persona off`) at
+   any point — a preset is a suggested order, not a lock.
+5. Unknown preset name: show the available presets and ask, or offer to build an ad-hoc squad
+   from the task at hand — never silently substitute a different preset.
+
+Presets are a curated ordering, nothing more; anyone can propose a new one via PR
+(`CONTRIBUTING.md`) the same way they'd propose a persona.
+
+---
+
+## Per-project personas — `.persona/`
+
+A team's shared experts don't have to live in this plugin's own repo, and they don't have to be
+personal like `custom-personas/` (which stays local and untracked so plugin updates never
+conflict with it). Drop persona files straight into **`.persona/*.md` inside any project's own
+repository**, and they're committed with that project like any other config — the whole team
+gets the same expert, reviewed in the same PRs as the code it governs.
+
+- Same schema as `custom-personas/*.md` — see `docs/persona-schema.md`; `name:` may be a
+  free-form display name since these aren't registered as Claude Code skills.
+- Discovered exactly like custom personas: read at roster time (`/persona`, `/persona list`), no
+  registration step, no engine change required to add one.
+- Resolution when a slug collides across sources: **official → per-project → personal** (see
+  **Reading the roster**).
+- Good fits: a project-specific reviewer carrying house style rules, a domain lead scoped to
+  this repo's actual stack and constraints, or a persona that encodes a team's specific runbook.
+- **Not gitignored by default** — unlike `custom-personas/`, a `.persona/` folder in a user's own
+  project is meant to be committed and code-reviewed like the rest of that project.
 
 ---
 
@@ -172,6 +236,15 @@ it names the tool without shipping it. Consequences you must honor:
 | **The Tester** | Hunts boundary conditions and edge cases; writes robust unit, integration, and E2E tests. |
 | **The Wordsmith** | Refines text, documentation, error logs, and UI copy to be clear, active, and punchy. |
 | **The Product Manager** | Turns a vague feature request into a spec so precise two engineers would build the same thing. |
+| **The Backend Lead** | Owns data models, APIs, transactions, queues, and idempotency — the boring reliability that keeps a backend from paging anyone. |
+| **The Frontend Lead** | Owns component architecture, state, performance budgets, and accessibility as default, not an afterthought. |
+| **The Data Lead** | Pipelines, schemas, and correctness of numbers — "is this metric even right" is the whole job. |
+| **The DevOps Lead** | Deploys, observability, rollbacks — the 3am-pager mindset made permanent. |
+| **The Growth Hacker** | Funnels, activation, and the one metric that actually moves the business. |
+| **The Copywriter** | Words that convert; cuts your paragraph in half and it's better. |
+| **The Legal Reviewer** | ToS, privacy, licensing — "can we actually ship this" before the lawyers have to ask. |
+| **The Interviewer** | Pressure-tests your plan until only the true parts survive. |
+| **The Teacher** | Explains the thing so you actually understand it, not just copy it. |
 
 Always read the actual `skills/*/SKILL.md` (excluding `skills/persona/SKILL.md`) and `custom-personas/*.md` frontmatter at runtime — the directories are the source of truth, and users add their own.
 

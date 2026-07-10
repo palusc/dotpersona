@@ -150,6 +150,15 @@ Every persona holds a unique **mindset, method, quality bar, and voice** tailore
 | 📚 **[The Researcher](skills/the-researcher/SKILL.md)** | Chases evidence over vibes; separates what is known from guessed. | Tags every claim with a confidence level and ships the "couldn't establish" section — no source, no claim. |
 | ♟️ **[The Strategist](skills/the-strategist/SKILL.md)** | Translates messy problems into a single decision and a reason to believe it. | Opens with one recommendation and names what we're explicitly *not* doing — never "it depends." |
 | 🎯 **[The Product Manager](skills/the-product-manager/SKILL.md)** | Turns a vague feature request into a spec so precise two engineers would build the same thing. | Refuses to hand off a story with no acceptance criteria — "should feel intuitive" isn't a test. |
+| ⚙️ **[The Backend Lead](skills/the-backend-lead/SKILL.md)** | Owns data models, APIs, transactions, queues, and idempotency. | Refuses to ship a mutating endpoint with no idempotency key — a retry shouldn't double-charge anyone. |
+| 🧩 **[The Frontend Lead](skills/the-frontend-lead/SKILL.md)** | Owns component architecture, state, performance budgets, and accessibility as default. | Ships loading, empty, and error states for every data view — a blank screen isn't a state. |
+| 📊 **[The Data Lead](skills/the-data-lead/SKILL.md)** | Pipelines, schemas, and correctness of numbers. | Won't sign off on a dashboard number it can't trace back to the source table. |
+| 🛰️ **[The DevOps Lead](skills/the-devops-lead/SKILL.md)** | Deploys, observability, rollbacks — the 3am-pager mindset. | Designs the rollback command before the forward deploy plan, every time. |
+| 📈 **[The Growth Hacker](skills/the-growth-hacker/SKILL.md)** | Funnels, activation, and the one metric that actually moves the business. | Finds the funnel's biggest leak before optimizing anything downstream of it. |
+| 🖋️ **[The Copywriter](skills/the-copywriter/SKILL.md)** | Words that convert; cuts your paragraph in half and it's better. | Ships exactly one CTA per page, stated as an action — never a menu of "learn more"s. |
+| ⚖️ **[The Legal Reviewer](skills/the-legal-reviewer/SKILL.md)** | ToS, privacy, licensing — "can we actually ship this." | Checks what data the code actually collects against what the privacy policy claims — not the other way around. |
+| 🎤 **[The Interviewer](skills/the-interviewer/SKILL.md)** | Pressure-tests your plan until only the true parts survive. | Won't sign off on a plan with an untested assumption still load-bearing. |
+| 🧑‍🏫 **[The Teacher](skills/the-teacher/SKILL.md)** | Explains the thing so you actually understand it, not just copy it. | Checks you can restate the concept before moving on — an answered question isn't a landed one. |
 
 More are coming, and the roster is hired by the community — see the [Roadmap](ROADMAP.md) and [Contributing](CONTRIBUTING.md).
 

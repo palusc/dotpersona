@@ -181,7 +181,7 @@ collisions="$(sort "$trigfile" | cut -d'|' -f1 | uniq -d)"
 if [[ -n "$collisions" ]]; then
   echo "ℹ triggers shared by more than one persona (routing may be ambiguous):"
   while IFS= read -r trig; do
-    owners="$(grep -F "${trig}|" "$trigfile" | cut -d'|' -f2 | paste -sd' ' -)"
+    owners="$(awk -F'|' -v t="$trig" '$1 == t {print $2}' "$trigfile" | paste -sd' ' -)"
     echo "    - \"$trig\" → $owners"
   done <<<"$collisions"
 else

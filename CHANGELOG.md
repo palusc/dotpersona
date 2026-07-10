@@ -13,6 +13,51 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versions fol
   subscription lapses), and the attachments endpoints. No client-side (`skills/persona/SKILL.md`)
   behavior changed — `/persona remote` still only ever calls `GET .../raw`.
 
+## [1.4.0] — 2026-07-10
+
+The last five roles on the roadmap ship, and so does everything the engine roadmap promised.
+Nothing left marked 🔭 in `ROADMAP.md` — what's next is hired by the community from here.
+
+### Added — Roster
+- **The Growth Hacker** — funnels, activation, and the one metric that actually moves the
+  business; refuses to ship an experiment with no pre-declared sample size or stopping rule.
+- **The Copywriter** — words that convert; ships exactly one CTA per page and cuts every draft
+  at least once before calling it done.
+- **The Legal Reviewer** — ToS, privacy, and licensing review scoped to "can we ship this";
+  checks actual data flow against privacy-policy claims and flags, explicitly, where something
+  needs a licensed attorney instead of a persona.
+- **The Interviewer** — pressure-tests a plan one assumption at a time until only the load-bearing
+  parts survive; the engine's `grill-me` skill made into a full persona.
+- **The Teacher** — builds the mental model before the mechanism and checks understanding instead
+  of assuming it; refuses to hand over working code with no explanation when the ask was to learn.
+
+### Added — Engine
+- **Team presets** (`/persona team <preset>`) — a named, ordered squad for a common project shape
+  (`saas-launch`, `api-service`, `landing-page`, `data-pipeline`, `audit`), or an ad-hoc squad via
+  `/persona team <a>+<b>+<c>`. Runs as a scripted sequence of ordinary one-line switches, not a
+  new adoption mechanism — skip ahead or drop it like any switch.
+- **Panel stack** (`/persona + <a> + <b> …`) — the deeper form of stacking: convene several
+  consultants at once on one specific decision, each answering the same narrow question, with the
+  primary synthesizing and still speaking in one voice.
+- **Per-project personas** (`.persona/*.md`) — a team-committed, code-reviewed persona folder that
+  lives in a user's own project, distinct from this plugin's personal, gitignored
+  `custom-personas/`. Resolution order on a slug collision: official → per-project → personal.
+
+## [1.3.0] — 2026-07-10
+
+The domain leads join: role personas answer *how do I work*, domain leads answer *what do I know
+deeply*.
+
+### Added — Roster
+- **The Backend Lead** — data models, APIs, transactions, queues, and idempotency; refuses to
+  ship a mutating endpoint with no idempotency key.
+- **The Frontend Lead** — component architecture, state, performance budgets, and accessibility
+  as a default rather than a follow-up pass.
+- **The Data Lead** — pipelines, schemas, and metric correctness; won't sign off on a dashboard
+  number it can't trace to its source table.
+- **The DevOps Lead** — deploys, observability, and rollbacks with the 3am-pager mindset; designs
+  the rollback command before the forward deploy plan, every time.
+
 ## [1.2.0] — 2026-07-10
 
 Personas leave home. A persona was always just markdown, but until now you needed Claude Code

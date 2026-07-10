@@ -105,6 +105,8 @@ stateDiagram-v2
 | `/persona remote <ID>` | Fetch `<owner>/<slug>` from the community registry (dotpersona.dev), save it under `custom-personas/`, and adopt it — the only place a persona crosses the network (§7). |
 | `/persona update` | Run `./install.sh --update` and output the result. |
 | `/persona + <name>` | **Stack** `<name>` onto the current primary. |
+| `/persona + <a> + <b> …` | **Panel stack**: convene several consultants on one specific decision; primary synthesizes (§6). |
+| `/persona team <preset>` | Summon a named, ordered squad for a project shape, or an ad-hoc one via `<a>+<b>+<c>` (§6). |
 | `/persona off` | Drop the persona. |
 | "be a designer", "act as an architect" | Treated as `/persona <role>` by intent. |
 
@@ -184,8 +186,26 @@ Two ways to move between personas, and the invariant **one persona speaks at a t
   consultant's judgment in; stacking adds judgment, not a second narrator.
   The primary's Definition of Done is binding, but the consultant's domain-specific requirements must be met as part of that judgment.
 
+- **Panel stack** (`/persona + <a> + <b> …`): the deeper form of stacking — convene *several*
+  consultants at once, but scoped to **one specific decision**, not the whole task. Each
+  consultant answers the same narrow question from their domain; the primary synthesizes their
+  judgment and still speaks in one voice. A panel briefs the primary, it never becomes a
+  multi-narrator conversation. Broad enough to need three consultants on everything? That's a
+  cue to switch, not stack three deep.
+
 Each persona's `consults:` list names the personas it naturally reaches for, and the engine
-honors it — so stacking is guided by the personas' own declared affinities rather than guessed.
+honors it — so stacking (single or panel) is guided by the personas' own declared affinities
+rather than guessed.
+
+### Team presets
+
+`/persona team <preset>` summons a named, ordered squad suited to a common project shape (e.g.
+`saas-launch`, `api-service`) and works through it phase by phase — each persona runs its Method,
+then hands off to the next with a normal one-line switch announcement. A preset is not a new
+adoption mechanism, just a scripted sequence of ordinary switches; the user can skip ahead or
+drop the squad at any point. `/persona team <a>+<b>+<c>` defines an ad-hoc squad inline for a
+shape with no built-in preset. The full preset table lives in `skills/persona/SKILL.md` → *Team
+presets*.
 
 ---
 
@@ -217,7 +237,25 @@ persona/
 │   │   └── SKILL.md
 │   ├── the-wordsmith/
 │   │   └── SKILL.md
-│   └── the-product-manager/
+│   ├── the-product-manager/
+│   │   └── SKILL.md
+│   ├── the-backend-lead/
+│   │   └── SKILL.md
+│   ├── the-frontend-lead/
+│   │   └── SKILL.md
+│   ├── the-data-lead/
+│   │   └── SKILL.md
+│   ├── the-devops-lead/
+│   │   └── SKILL.md
+│   ├── the-growth-hacker/
+│   │   └── SKILL.md
+│   ├── the-copywriter/
+│   │   └── SKILL.md
+│   ├── the-legal-reviewer/
+│   │   └── SKILL.md
+│   ├── the-interviewer/
+│   │   └── SKILL.md
+│   └── the-teacher/
 │       └── SKILL.md
 ├── templates/
 │   └── PERSONA.template.md        # scaffold for /persona new
@@ -237,9 +275,14 @@ Note that the **disk is the source of truth**: the engine always reads the live 
 frontmatter and `custom-personas/*.md` at runtime rather than trusting any hard-coded list. Adding a persona
 file or folder automatically extends routing — zero engine changes.
 
-**Two resolution paths the engine relies on:**
+**Three resolution paths the engine relies on:**
 
-1. **Personas** resolve as `skills/*/SKILL.md` and `custom-personas/*.md` **relative to `skills/persona/SKILL.md`** — sibling/parent files. This is why nothing needs a registry: to find a persona, read the folder next to the engine.
-2. **Declared skills** resolve globally via `~/.claude/skills/X/SKILL.md` existence or the available-skills list (§4).
+1. **Official personas** resolve as `skills/*/SKILL.md` **relative to `skills/persona/SKILL.md`** — sibling files. This is why nothing needs a registry: to find a persona, read the folder next to the engine.
+2. **Per-project personas** resolve as `.persona/*.md` **in the current project's own working directory** — a project's committed, team-shared experts, unrelated to this plugin's install location. See `skills/persona/SKILL.md` → *Per-project personas*.
+3. **Personal personas** resolve as `custom-personas/*.md` inside this plugin's own install — local and gitignored, so updates never conflict with them.
+4. **Declared skills** (inside any persona) resolve globally via `~/.claude/skills/X/SKILL.md` existence or the available-skills list (§4).
 
-**How `/persona` becomes findable:** this repo *is* a Claude plugin. Installing means symlinking/copying each directory under `skills/` to `~/.claude/skills/`. The main `persona` skill is what makes the CLI route `/persona` — and phrases like "act as an architect" — to this engine. The symlink install matters for `/persona update`, which runs `./install.sh --update` to fetch the latest personas and engine improvements, then reports what changed from `CHANGELOG.md`; a plain copy can't self-update and falls back to re-running the installer. Because personas are siblings of the `persona` skill, the engine automatically finds every persona — the roster grows by adding files, not by wiring anything up. Custom personas are saved in `custom-personas/` which is ignored by Git, ensuring updates never conflict with user-authored experts. The engine confirms the environment by checking `BASH_SOURCE` to ensure it resolves paths relative to its installation location.
+If a slug exists in more than one of the first three, resolution is **official → per-project →
+personal** — a project's committed persona wins over a same-named personal one.
+
+**How `/persona` becomes findable:** this repo *is* a Claude plugin. Installing means symlinking/copying each directory under `skills/` to `~/.claude/skills/`. The main `persona` skill is what makes the CLI route `/persona` — and phrases like "act as an architect" — to this engine. The symlink install matters for `/persona update`, which runs `./install.sh --update` to fetch the latest personas and engine improvements, then reports what changed from `CHANGELOG.md`; a plain copy can't self-update and falls back to re-running the installer. Because official personas are siblings of the `persona` skill, the engine automatically finds every one of them — the roster grows by adding files, not by wiring anything up. The engine confirms the environment by checking `BASH_SOURCE` to ensure it resolves paths relative to its installation location.

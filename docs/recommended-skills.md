@@ -26,6 +26,15 @@ If an attribution here is wrong, missing, or a skill has moved, please
 | The Tester | `write-unit-tests`, `write-integration-tests`, `e2e-testing` | mixed |
 | The Wordsmith | `document-generator`, `copywriting`, `technical-writing` | mixed |
 | The Product Manager | `writing-plans`, `brainstorming`, `grill-me` | mixed |
+| The Backend Lead | `api-contract-testing`, `idempotency-review`, `load-testing` | community |
+| The Frontend Lead | `accessibility-audit`, `bundle-analysis`, `component-architecture-review` | community |
+| The Data Lead | `data-quality-testing`, `pipeline-lineage`, `warehouse-modeling` | community |
+| The DevOps Lead | `run`, `verify`, `incident-postmortem` | mixed |
+| The Growth Hacker | `experiment-design`, `funnel-analysis`, `mckinsey-strategist` | mixed |
+| The Copywriter | `storytelling-expert`, `copywriting`, `premium-website` | mixed |
+| The Legal Reviewer | `license-audit`, `contract-redline`, `privacy-policy-review` | community |
+| The Interviewer | `grill-me`, `brainstorming`, `writing-plans` | bundled |
+| The Teacher | `deep-research`, `graphify`, `webpage-reader` | bundled |
 
 ## How to install a missing skill
 
