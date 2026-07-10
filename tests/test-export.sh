@@ -9,7 +9,7 @@ EXPORT_SCRIPT="$ROOT_DIR/scripts/persona-export.sh"
 
 # Create a temporary directory for test artifacts and register cleanup
 TMP_DIR="$(mktemp -d)"
-# shellcheck disable=SC2329
+# shellcheck disable=SC2317,SC2329
 cleanup() {
   rm -rf "$TMP_DIR"
 }
