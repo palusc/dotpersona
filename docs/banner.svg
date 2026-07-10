@@ -46,7 +46,7 @@
 
   <!-- roster (two left-aligned rows — short enough to fit any font substitution) -->
   <g font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="19" fill="#7d8aa3" letter-spacing="0.5">
-    <text x="74" y="294">Architect&#160;·&#160;Designer&#160;·&#160;Shipper&#160;·&#160;Auditor&#160;·&#160;DBA</text>
-    <text x="74" y="322">Tester&#160;·&#160;Wordsmith&#160;·&#160;Researcher&#160;·&#160;Strategist</text>
+    <text x="74" y="294">Architect&#160;·&#160;Designer&#160;·&#160;Shipper&#160;·&#160;Auditor&#160;·&#160;DBA&#160;·&#160;Tester</text>
+    <text x="74" y="322">Wordsmith&#160;·&#160;Researcher&#160;·&#160;Strategist&#160;·&#160;Product Manager</text>
   </g>
 </svg>

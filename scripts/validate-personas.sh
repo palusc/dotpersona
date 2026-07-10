@@ -89,6 +89,34 @@ for f in "${files[@]}"; do
 done
 
 echo
+
+# Manifest sync: plugin.json's "skills" array must list every skills/*/SKILL.md
+# on disk, and nothing that no longer exists. Prevents a repeat of the bug where
+# The DBA, The Tester, and The Wordsmith shipped but were never added to
+# plugin.json, silently breaking installs via the plugin marketplace path.
+if [[ -f "$ROOT/plugin.json" ]]; then
+  manifest_skills="$(jq -r '.skills[]' "$ROOT/plugin.json" | sort)"
+  disk_skills="$(cd "$ROOT" && ls skills/*/SKILL.md | sort)"
+
+  missing="$(comm -23 <(echo "$disk_skills") <(echo "$manifest_skills"))"
+  stale="$(comm -13 <(echo "$disk_skills") <(echo "$manifest_skills"))"
+
+  if [[ -n "$missing" ]]; then
+    FAIL=1
+    echo "✗ plugin.json is missing skills that exist on disk:"
+    sed 's/^/    - /' <<<"$missing"
+  fi
+  if [[ -n "$stale" ]]; then
+    FAIL=1
+    echo "✗ plugin.json lists skills that no longer exist on disk:"
+    sed 's/^/    - /' <<<"$stale"
+  fi
+  if [[ -z "$missing" && -z "$stale" ]]; then
+    echo "✓ plugin.json matches skills/ on disk."
+  fi
+fi
+
+echo
 if [[ $FAIL -eq 0 ]]; then
   echo "All ${#files[@]} personas valid."
 else
