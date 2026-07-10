@@ -6,6 +6,25 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versions fol
 
 ## [Unreleased]
 
+### Added
+- `/persona remote <owner>/<slug>` — install a persona from the community registry at
+  dotpersona.dev, save it to `custom-personas/`, and adopt it. The client↔registry contract
+  lives in `docs/remote-registry.md`. Before adoption, the engine now shows the fetched
+  persona's name, essence, and owner and asks for a go-ahead — installed content becomes
+  authoritative instructions Claude follows, and the registry only validates schema *shape*,
+  not *safety*.
+- `scripts/validate-personas.sh` now checks that `skills/persona/SKILL.md`'s own roster table
+  lists every persona shipped on disk, the same class of check added for `plugin.json` in 1.1.1.
+
+### Fixed
+- `skills/persona/SKILL.md`'s roster table, `docs/recommended-skills.md`, and
+  `docs/how-it-works.md`'s file tree had all gone stale the same way `docs/banner.svg` did in
+  1.1.1 — The DBA, The Tester, The Wordsmith, and/or The Product Manager were missing from each,
+  depending on the file. All four now match the shipped roster everywhere.
+- `docs/persona-schema.md` documented `name:` as a free-form display name (`The Designer`), but
+  every shipped persona actually sets it to the kebab-case slug — Claude Code's skill loader
+  keys the skill by that field. Doc now matches the 10 real files.
+
 ## [1.1.1] — 2026-07-10
 
 ### Fixed

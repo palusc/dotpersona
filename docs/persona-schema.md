@@ -9,7 +9,10 @@ Match it exactly when you write a new persona.
 ```yaml
 ---
 persona: the-designer          # slug, kebab-case, matches the filename
-name: The Designer             # display name, "The <Role>"
+name: the-designer             # official personas: must equal `persona:` — Claude Code's skill
+                                # loader keys the skill by this field. Custom personas in
+                                # `custom-personas/` aren't registered as skills and may use a
+                                # free-form display name instead.
 essence: >-                    # one line — the identity, shown in the roster
   Understands the system before touching a pixel; ships taste, not decoration.
 version: 1.0.0

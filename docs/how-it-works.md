@@ -102,6 +102,7 @@ stateDiagram-v2
 | `/persona <name> <task>` | Adopt **and immediately begin** the task in-character. |
 | `/persona list` | Print roster (name + essence). No adoption. |
 | `/persona new` | Launch **Persona Forge** to author a new file. |
+| `/persona remote <ID>` | Fetch `<owner>/<slug>` from the community registry (dotpersona.dev), save it under `custom-personas/`, and adopt it — the only place a persona crosses the network (§7). |
 | `/persona update` | Run `./install.sh --update` and output the result. |
 | `/persona + <name>` | **Stack** `<name>` onto the current primary. |
 | `/persona off` | Drop the persona. |
@@ -208,13 +209,22 @@ persona/
 │   │   └── SKILL.md
 │   ├── the-researcher/
 │   │   └── SKILL.md
-│   └── the-strategist/
+│   ├── the-strategist/
+│   │   └── SKILL.md
+│   ├── the-dba/
+│   │   └── SKILL.md
+│   ├── the-tester/
+│   │   └── SKILL.md
+│   ├── the-wordsmith/
+│   │   └── SKILL.md
+│   └── the-product-manager/
 │       └── SKILL.md
 ├── templates/
 │   └── PERSONA.template.md        # scaffold for /persona new
 ├── custom-personas/               # user custom-created personas (added to .gitignore)
 └── docs/
     ├── persona-schema.md          # the PERSONA.md / SKILL.md contract
+    ├── remote-registry.md         # the /persona remote client↔registry contract
     └── how-it-works.md            # this document
 ```
 

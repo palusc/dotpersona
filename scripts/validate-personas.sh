@@ -118,6 +118,30 @@ fi
 
 echo
 
+# Roster-table sync: skills/persona/SKILL.md's own "Roster (shipped personas)" table must
+# mention every shipped persona on disk. This is a repeat of the same drift bug that hit
+# docs/banner.svg and docs/recommended-skills.md (The Product Manager, The DBA, The Tester and
+# The Wordsmith all went missing from hand-maintained lists after shipping) — catch it here too.
+if [[ -f "$ROOT/skills/persona/SKILL.md" ]]; then
+  roster_section="$(awk '/^## Roster \(shipped personas\)/{f=1} f{print} f&&/^---$/{exit}' "$ROOT/skills/persona/SKILL.md")"
+  roster_missing=()
+  for f in "$ROOT"/skills/*/SKILL.md; do
+    base="$(basename "$(dirname "$f")")"
+    [[ "$base" == "persona" ]] && continue
+    needle="$(sed -E 's/^the-//; s/-/ /g' <<<"$base")"
+    grep -qi -- "$needle" <<<"$roster_section" || roster_missing+=("$base")
+  done
+  if [[ ${#roster_missing[@]} -gt 0 ]]; then
+    FAIL=1
+    echo "✗ skills/persona/SKILL.md's roster table is missing:"
+    printf '    - %s\n' "${roster_missing[@]}"
+  else
+    echo "✓ skills/persona/SKILL.md roster table matches skills/ on disk."
+  fi
+fi
+
+echo
+
 # Trigger collisions: informational, not fatal. /persona routes by matching
 # `triggers` against workspace context — two personas claiming the exact same
 # trigger word is a real ambiguity signal (a legitimate soft overlap can still

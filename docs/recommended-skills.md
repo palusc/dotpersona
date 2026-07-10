@@ -25,6 +25,7 @@ If an attribution here is wrong, missing, or a skill has moved, please
 | The DBA | `database-migration`, `query-optimization`, `schema-review` | mixed |
 | The Tester | `write-unit-tests`, `write-integration-tests`, `e2e-testing` | mixed |
 | The Wordsmith | `document-generator`, `copywriting`, `technical-writing` | mixed |
+| The Product Manager | `writing-plans`, `brainstorming`, `grill-me` | mixed |
 
 ## How to install a missing skill
 

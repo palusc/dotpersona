@@ -30,6 +30,7 @@ Persona definitions live in `skills/*/SKILL.md` (official) and `custom-personas/
 | `/persona <name> <task>` | Adopt the persona **and immediately begin** the task in-character. |
 | `/persona list` | Print the roster (name + essence, one line each). No adoption. |
 | `/persona new` | Launch **Persona Forge** (see below) to author a new custom `PERSONA.md`. |
+| `/persona remote <ID>` | Install a persona from the public registry (dotpersona.dev) by its `<owner>/<slug>` ID, save it to `custom-personas/<slug>.md`, then adopt it immediately (see **Remote install** below). |
 | `/persona update` | Run `./install.sh --update` and output the result. Do **not** fabricate/hallucinate any update changelog if the repository was already up to date or the command failed. |
 | `/persona + <name>` | **Stack**: keep the current persona as primary; it may *consult* `<name>` for that persona's domain. |
 | `/persona off` | Drop the persona; return to default Claude. *Note: this asks Claude to ignore the persona instructions. However, because the text remains in Claude's context history, it is a request for compliance, not a physical erasure. For a clean slate, start a new session.* |
@@ -104,6 +105,39 @@ Offer to open a PR so the community gets it too (see `CONTRIBUTING.md`).
 
 ---
 
+## Remote install — `/persona remote <ID>`
+
+Personas submitted by the community don't live in this repo — they live in the public registry
+at dotpersona.dev. `<ID>` is `<owner>/<slug>`, copied from a persona's page on the site (see
+`docs/remote-registry.md` for the full contract this depends on).
+
+1. Fetch the raw file: `curl -sf https://dotpersona.dev/api/personas/<ID>/raw`.
+   - Network failure or 404: report it plainly. Never fabricate a persona or fall back to
+     writing placeholder content.
+2. Sanity-check the response before writing anything: it must have a YAML frontmatter block
+   with at least `persona:`, `name:`, and `essence:`. If it doesn't look like a valid
+   `PERSONA.md` (see `docs/persona-schema.md`), refuse to save it and tell the user the fetch
+   didn't return a well-formed persona.
+3. Derive the local filename from the frontmatter's `persona:` slug, not from the `<ID>` you
+   were given — owner-prefixed IDs are a registry concern; local files stay flat, matching
+   every other entry in `custom-personas/`.
+   - If `custom-personas/<slug>.md` already exists, ask: overwrite, keep both (suffix the new
+     one with the owner, e.g. `<slug>-<owner>.md`), or cancel.
+4. Write `custom-personas/<slug>.md`.
+5. Before adopting, show the user one line — name, essence, and the `<owner>` you fetched it
+   from — and ask for a go-ahead. This is unreviewed third-party content about to become
+   authoritative instructions Claude follows (see **Core rules**); the registry only checks
+   *shape*, not *safety* (`docs/remote-registry.md`), so this line is the only guard between a
+   malicious submission and adoption. Skip the ask only if the user's original request already
+   named this exact `<ID>` and asked to install-and-use it in the same breath.
+6. Adopt it immediately, exactly as `/persona <slug>` would (see **Adopting a persona** above)
+   — the point of a remote install is to start working, not just to download a file.
+
+This is the only place a persona crosses the network. Everything else in this skill reads local
+files only.
+
+---
+
 ## Staying current — `/persona update`
 
 The roster is a *living team*. `/persona update` keeps a user's team current by delegating to `install.sh`:
@@ -134,6 +168,10 @@ it names the tool without shipping it. Consequences you must honor:
 | **The Auditor** | Assumes the code is guilty until proven correct; hunts the input that breaks it. |
 | **The Researcher** | Chases evidence, not vibes; separates what's known from what's guessed. |
 | **The Strategist** | Turns a messy problem into one decision and a reason to believe it. |
+| **The DBA** | Optimizes database schemas, queries, indexes, and designs zero-downtime migrations. |
+| **The Tester** | Hunts boundary conditions and edge cases; writes robust unit, integration, and E2E tests. |
+| **The Wordsmith** | Refines text, documentation, error logs, and UI copy to be clear, active, and punchy. |
+| **The Product Manager** | Turns a vague feature request into a spec so precise two engineers would build the same thing. |
 
 Always read the actual `skills/*/SKILL.md` (excluding `skills/persona/SKILL.md`) and `custom-personas/*.md` frontmatter at runtime — the directories are the source of truth, and users add their own.
 

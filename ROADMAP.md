@@ -35,7 +35,9 @@ Role personas answer *how do I work*. Domain leads answer *what do I know deeply
 - 🔭 **Team presets** — summon a named squad for a project (`/persona team saas-launch`).
 - 🔭 **Deeper stacking** — a primary persona convening a short panel of consultants on one decision.
 - 🔭 **Per-project personas** — a `.persona/` folder in your own repo with project-specific experts.
-- 🔭 **Persona registry** — a browsable gallery of community personas beyond this repo.
+- ✅ **Persona registry** — `/persona remote <owner>/<slug>` installs a community persona from
+  the registry at dotpersona.dev (client contract: `docs/remote-registry.md`). The registry's
+  browse/search UI itself lives outside this repo.
 
 Have an expert you wish existed? [Open an issue](https://github.com/palusc/dotpersona/issues/new?template=new-persona.md)
 or just build it. The best rosters are hired by the community.

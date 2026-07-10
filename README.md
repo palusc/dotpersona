@@ -80,6 +80,7 @@ The bug that actually loses money — the concurrent double-spend — is the fif
 /persona auditor            # Adopts a specific specialist (e.g. The Auditor)
 /persona auditor index.js   # Adopt the Auditor and immediately review index.js
 /persona + auditor          # Stack: consult the Auditor while keeping your primary expert
+/persona remote owner/slug  # Install a community persona from the dotpersona.dev registry
 /persona off                # Return to default Claude
 ```
 
