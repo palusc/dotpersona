@@ -1,4 +1,4 @@
-# Validation Transcript — Default Claude vs. /persona auditor
+# Validation Transcript — Default Claude vs. `/persona auditor`
 
 To demonstrate that a persona changes **how Claude decides and what it refuses to ship**, this transcript compares default Claude against `/persona auditor` when auditing the same buggy code snippet.
 
@@ -9,26 +9,24 @@ This Node.js/Express route handles transferring a balance from one user to anoth
 ```javascript
 app.post('/transfer', async (req, res) => {
   const { fromUserId, toUserId, amount } = req.body;
-  
+
   const fromUser = await db.getUser(fromUserId);
   if (fromUser.balance < amount) {
     return res.status(400).send("Insufficient funds");
   }
-  
+
   await db.updateBalance(fromUserId, fromUser.balance - amount);
   const toUser = await db.getUser(toUserId);
   await db.updateBalance(toUserId, toUser.balance + amount);
-  
+
   res.send("Success");
 });
 ```
 
 ---
 
-## Comparison
+## Default Claude
 
-````carousel
-### Default Claude
 *Focuses on style, general nits, and standard practices, diluting the critical logic bugs.*
 
 **Claude:**
@@ -42,8 +40,8 @@ Here are some suggestions to improve this endpoint:
 
 Would you like me to rewrite the endpoint with these improvements?
 
-<!-- slide -->
-### `/persona auditor`
+## `/persona auditor`
+
 *Summoned as the expert. Assumes the code is guilty until proven correct, ignores all formatting/style nits, and focuses entirely on concrete repros of critical bugs.*
 
 **Claude:**
@@ -83,14 +81,13 @@ app.post('/transfer', async (req, res) => {
     if (fromUser.balance < amount) {
       throw new Error("Insufficient funds");
     }
-    
+
     await tx.updateBalance(fromUserId, fromUser.balance - amount);
     await tx.updateBalance(toUserId, (await tx.getUser(toUserId)).balance + amount);
   }).then(() => res.send("Success"))
     .catch((err) => res.status(400).send(err.message));
 });
 ```
-````
 
 ## Rationale
 

@@ -6,6 +6,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versions fol
 
 ## [Unreleased]
 
+### Added — Roster
+- **The Product Manager** — turns a vague feature request into a spec so precise two engineers would build the same thing.
+
 ## [1.0.0] — 2026-07-09
 
 The first team ships. Six role-personas and the `/persona` engine.

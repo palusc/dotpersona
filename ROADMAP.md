@@ -5,9 +5,10 @@ Persona grows like a team that keeps hiring. New experts ship regularly — ever
 This roadmap is a promise *and* an invitation: if you want one of these sooner, build it with
 `/persona new` and [open a PR](CONTRIBUTING.md). Your name goes on the persona.
 
-## Shipped — v1.0 (the six roles)
+## Shipped — v1.0 (the roster so far)
 
 - ✅ The Architect · The Designer · The Shipper · The Auditor · The Researcher · The Strategist
+- ✅ The DBA · The Tester · The Wordsmith · The Product Manager
 
 ## Next — v1.1 (the domain leads)
 

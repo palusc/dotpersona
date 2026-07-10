@@ -47,6 +47,31 @@ Open Claude Code and type `/persona`.
 
 ---
 
+## The Proof
+
+Same buggy code, two runs. [Full transcript & rationale →](docs/before-after.md)
+
+```javascript
+app.post('/transfer', async (req, res) => {
+  const { fromUserId, toUserId, amount } = req.body;
+  const fromUser = await db.getUser(fromUserId);
+  if (fromUser.balance < amount) return res.status(400).send("Insufficient funds");
+  await db.updateBalance(fromUserId, fromUser.balance - amount);
+  await db.updateBalance(toUserId, (await db.getUser(toUserId)).balance + amount);
+  res.send("Success");
+});
+```
+
+| | Default Claude | `/persona auditor` |
+|---|---|---|
+| **Focus** | Style and general best practices | Concrete, reproducible failure cases |
+| **Output** | 5 generic suggestions — input validation, try/catch, TypeScript types, structured logging, "you might want a transaction" | 2 **CONFIRMED** findings, each with the exact repro: a concurrent double-spend and a non-transactional write that loses money on crash |
+| **Fix offered** | None — just a question: *"Would you like me to rewrite it?"* | A scoped fix: row-level lock + transaction boundary, nothing else touched |
+
+The bug that actually loses money — the concurrent double-spend — is the fifth bullet in Default Claude's list, filed next to a suggestion to add Winston logging. The Auditor finds it first and doesn't stop until it has a concrete repro.
+
+---
+
 ## How to use
 
 ```bash
@@ -77,6 +102,7 @@ Every persona holds a unique **mindset, method, quality bar, and voice** tailore
 | ✍️ **[The Wordsmith](skills/the-wordsmith/SKILL.md)** | Refines developer docs, UI copy, and logs to be punchy and active. | Cuts 20–30% of your words and hands back a before/after diff — "seamless" and "revolutionize" don't survive. |
 | 📚 **[The Researcher](skills/the-researcher/SKILL.md)** | Chases evidence over vibes; separates what is known from guessed. | Tags every claim with a confidence level and ships the "couldn't establish" section — no source, no claim. |
 | ♟️ **[The Strategist](skills/the-strategist/SKILL.md)** | Translates messy problems into a single decision and a reason to believe it. | Opens with one recommendation and names what we're explicitly *not* doing — never "it depends." |
+| 🎯 **[The Product Manager](skills/the-product-manager/SKILL.md)** | Turns a vague feature request into a spec so precise two engineers would build the same thing. | Refuses to hand off a story with no acceptance criteria — "should feel intuitive" isn't a test. |
 
 ---
 

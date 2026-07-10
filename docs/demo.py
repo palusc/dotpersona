@@ -30,20 +30,21 @@ ROSTER = [
     ("The Designer",   CY, "Understands the system before touching a pixel."),
     ("The Shipper",    GR, "Momentum over ceremony — small, verified steps."),
     ("The Auditor",    RD, "Assumes code is guilty until proven correct."),
-    ("The DBA",        YL, "Query profiling, indexing, zero-downtime migrations."),
+    ("The DBA",        YL, "Query plans, indexing, zero-downtime migrations."),
     ("The Tester",     GR, "Hunts edge-cases; writes robust test suites."),
     ("The Wordsmith",  BL, "Punchy docs, UI copy, and clean logs."),
     ("The Researcher", CY, "Chases evidence over vibes."),
     ("The Strategist", MG, "One decision, and a reason to believe it."),
+    ("The Product Manager", BL, "Turns a vague ask into a spec, not a wish."),
 ]
 
 
 def show_list():
     line()
-    line(f"  {B}The roster{R} {DIM}— 9 senior specialists{R}", 0.15)
+    line(f"  {B}The roster{R} {DIM}— 10 senior specialists{R}", 0.15)
     line()
     for name, col, essence in ROSTER:
-        line(f"  {col}●{R}  {B}{name:<15}{R}{DIM}{essence}{R}", 0.09)
+        line(f"  {col}●{R}  {B}{name:<15}{R} {DIM}{essence}{R}", 0.09)
     line()
 
 
