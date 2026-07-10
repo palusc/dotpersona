@@ -6,6 +6,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versions fol
 
 ## [Unreleased]
 
+### Changed
+- `docs/remote-registry.md` now documents the registry contract as actually shipped at
+  dotpersona.dev: visibility tiers (`public`/`unlisted`/`private`/`restricted`), Free/Pro gating
+  (3-persona cap, no private/restricted on Free, existing private personas lock if a Pro
+  subscription lapses), and the attachments endpoints. No client-side (`skills/persona/SKILL.md`)
+  behavior changed — `/persona remote` still only ever calls `GET .../raw`.
+
 ## [1.2.0] — 2026-07-10
 
 Personas leave home. A persona was always just markdown, but until now you needed Claude Code
