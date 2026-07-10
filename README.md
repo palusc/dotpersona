@@ -16,6 +16,15 @@
 
 **Turn Claude Code into a team of senior specialists.** Summon the right expert for your workspace with a single command.
 
+<div align="center">
+  <img src="docs/demo.gif" alt="Persona Auditor Demo — /persona list and /persona auditor in action" width="640" style="max-width:100%; border-radius:12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);" />
+  <p><sub>Generated automatically using <a href="docs/demo.tape">docs/demo.tape</a> and <a href="https://github.com/charmbracelet/vhs">vhs</a></sub></p>
+</div>
+
+**Want proof it's not just a personality skin?** [See the full before/after transcript](docs/before-after.md) — the same buggy transfer endpoint, default Claude vs. `/persona auditor`, side by side. Default Claude buries the double-spend race condition under logging and TypeScript nits; the Auditor ignores the nits and hands you the exact concurrent-request repro plus a scoped fix.
+
+---
+
 ## The Pain: Why Persona exists
 
 I kept re-explaining the same thing to Claude every session — "review this like a security engineer," "now think like a DBA" — pasting the same 400-word prompt from a notes file I never fully trusted. Half the time I'd forget a rule I'd relied on last week, and the review would quietly miss what it missed before. I wanted the mindset to load on command and hold itself to a bar, without me re-typing it or dragging the whole thing into every conversation.
@@ -51,17 +60,6 @@ Open Claude Code and type `/persona`.
 
 You can also switch naturally in chat: *"be a designer for this"*, *"put on your auditor hat"*.
 
-### Real-world Demo
-
-Here is a recording of `/persona` list and `/persona auditor` in action:
-
-<div align="center">
-  <img src="docs/demo.gif" alt="Persona Auditor Demo" width="600" style="max-width:100%; border-radius:12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);" />
-  <p><sub>Generated automatically using <a href="docs/demo.tape">docs/demo.tape</a> and <a href="https://github.com/charmbracelet/vhs">vhs</a></sub></p>
-</div>
-
-**Want proof it's not just a personality skin?** [See the full before/after transcript](docs/before-after.md) — the same buggy transfer endpoint, default Claude vs. `/persona auditor`, side by side. Default Claude buries the double-spend race condition under logging and TypeScript nits; the Auditor ignores the nits and hands you the exact concurrent-request repro plus a scoped fix.
-
 ---
 
 ## The Roster
@@ -94,8 +92,7 @@ Every persona holds a unique **mindset, method, quality bar, and voice** tailore
 
 ---
 
-<details>
-<summary>📖 <b>Quick Examples & Workflows</b></summary>
+## Quick Examples
 
 Here is how different personas respond to specific developer scenarios in your workspace:
 
@@ -156,7 +153,8 @@ Here is how different personas respond to specific developer scenarios in your w
   - [x] Error Path: Empty authorization header returns 401.
   - [x] Edge Case: Expiration timestamp overflow values.
   ```
-</details>
+
+---
 
 <details>
 <summary>⚙️ <b>Architecture & Auto-Routing Flow</b></summary>
