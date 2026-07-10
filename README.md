@@ -60,6 +60,8 @@ Here is a recording of `/persona` list and `/persona auditor` in action:
   <p><sub>Generated automatically using <a href="docs/demo.tape">docs/demo.tape</a> and <a href="https://github.com/charmbracelet/vhs">vhs</a></sub></p>
 </div>
 
+**Want proof it's not just a personality skin?** [See the full before/after transcript](docs/before-after.md) — the same buggy transfer endpoint, default Claude vs. `/persona auditor`, side by side. Default Claude buries the double-spend race condition under logging and TypeScript nits; the Auditor ignores the nits and hands you the exact concurrent-request repro plus a scoped fix.
+
 ---
 
 ## The Roster
