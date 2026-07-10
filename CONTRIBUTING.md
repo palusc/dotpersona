@@ -20,6 +20,38 @@ The best rosters are hired by the community. Adding a persona is deliberately ti
 5. **Log it**: add one line to `CHANGELOG.md` under `[Unreleased]`.
 6. **Open a PR.** Your handle goes in the persona's `author:` field and the changelog.
 
+## Branching & Git Workflow
+
+To ensure a smooth contribution flow and keep the history clean, please follow these branching and commit rules:
+
+1. **Do not submit PRs from your fork's `main` branch.** Always create a descriptive feature branch:
+   ```bash
+   git checkout -b feat/add-the-copywriter
+   ```
+2. **Make focused, semantic commits.** Try to group related changes together.
+   ```bash
+   git commit -m "feat: add the copywriter persona"
+   ```
+3. **Keep your branch updated** with the upstream repository:
+   ```bash
+   git remote add upstream https://github.com/palusc/dotpersona.git
+   git fetch upstream
+   git rebase upstream/main
+   ```
+4. **Push your branch and open a PR:**
+   ```bash
+   git push origin feat/add-the-copywriter
+   ```
+
+### Walkthrough: A Perfect Persona PR
+
+If you're proposing a new official persona (e.g. *The Copywriter*), a complete pull request should make changes to the following files:
+
+- **`[NEW]` `skills/the-copywriter/SKILL.md`**: The actual persona file following the schema.
+- **`[MODIFY]` `plugin.json`**: Add the new skill path `"skills/the-copywriter/SKILL.md"` to the `"skills"` array so the installer knows to symlink it.
+- **`[MODIFY]` `skills/persona/SKILL.md`**: Add the copywriter to the markdown roster table inside the `/persona` engine file.
+- **`[MODIFY]` `CHANGELOG.md`**: Add an entry under `### Added` in the `[Unreleased]` section.
+
 ## What makes a persona get merged
 
 A persona must be **opinionated**. The bar: *if it behaves like a generalist on a task, it's noise.*

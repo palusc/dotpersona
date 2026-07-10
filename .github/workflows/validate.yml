@@ -33,7 +33,7 @@ jobs:
           fi
           shellcheck --version
       - name: Lint every shell script we ship
-        run: shellcheck --severity=style --shell=bash install.sh scripts/*.sh
+        run: shellcheck --severity=style --shell=bash install.sh scripts/*.sh tests/*.sh
 
   version-bump:
     name: persona version bump
@@ -68,6 +68,8 @@ jobs:
           bash scripts/persona-export.sh --all --target agents >/dev/null
           test "$(grep -c 'persona:start' AGENTS.md)" -eq 1
           echo "✓ agents: re-export replaces the block instead of duplicating it"
+      - name: Run automated export integration tests
+        run: bash tests/test-export.sh
 
   installer:
     name: installer dry-run

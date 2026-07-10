@@ -23,6 +23,9 @@
 
 **Want proof it's not just a personality skin?** [See the full before/after transcript](docs/before-after.md) — the same buggy transfer endpoint, default Claude vs. `/persona auditor`, side by side. Default Claude buries the double-spend race condition under logging and TypeScript nits; the Auditor ignores the nits and hands you the exact concurrent-request repro plus a scoped fix.
 
+> [!NOTE]
+> **TL;DR:** Persona packages senior developer mindsets (Architect, Auditor, DBA, etc.) into schema-validated markdown experts. It auto-routes the right specialist to your Claude Code workspace or exports them directly to Cursor (`.mdc`), Claude.ai, or `AGENTS.md`. No manual prompt copy-pasting, no bloated `CLAUDE.md`.
+
 ---
 
 ## The Pain: Why Persona exists
@@ -48,7 +51,7 @@ Persona solves this by **packaging** specialized mindsets into modular, schema-v
 
 - You want faster autocomplete. Persona changes *judgment*, not keystrokes.
 - You want a personality skin. Every persona here has to change the *output* or it doesn't get merged — that's the [merge bar](CONTRIBUTING.md#what-makes-a-persona-get-merged).
-- You don't use Claude Code. You can still take the personas with you — see [Beyond Claude Code](#beyond-claude-code) — but `/persona` auto-routing and stacking won't come along.
+- You don't use Claude Code. You can still take the personas with you — see [Beyond Claude Code](#beyond-claude-code-portability-cursor-claudeai-chatgpt) — but `/persona` auto-routing and stacking won't come along.
 
 ## Quick Install
 
@@ -67,6 +70,24 @@ curl -fsSL https://raw.githubusercontent.com/palusc/dotpersona/main/install.sh |
 Open Claude Code and type `/persona`.
 
 Everything is a symlink into `~/.claude/skills`, so `/persona update` (or `git pull`) keeps you current. `./install.sh --uninstall` removes every link. Existing folders are never overwritten — they're moved to `<name>.backup.<pid>` first.
+
+---
+
+## Beyond Claude Code: Portability (Cursor, Claude.ai, ChatGPT)
+
+A persona is a markdown file, not a Claude Code feature. `scripts/persona-export.sh` reshapes any of them for wherever you actually work:
+
+```bash
+scripts/persona-export.sh --list                   # who's on the roster
+scripts/persona-export.sh auditor | pbcopy         # paste into Claude.ai or ChatGPT
+scripts/persona-export.sh auditor --target json    # {"system": …} for the Messages API
+scripts/persona-export.sh --all --target cursor    # → .cursor/rules/*.mdc
+scripts/persona-export.sh --all --target agents    # → AGENTS.md (Codex, Zed, Amp, …)
+```
+
+The export carries the identity, the method, the quality bar, the voice — and the degradation contract, so a persona that names a Claude Code skill it can't reach does the work by hand instead of stalling.
+
+What doesn't travel: auto-routing, stacking, and `/persona update`. Everywhere but Claude Code, you pick the expert yourself. Full trade-off table and an API example: [`docs/portability.md`](docs/portability.md).
 
 ---
 
@@ -244,24 +265,6 @@ Here is how different personas respond to specific developer scenarios in your w
 
 ---
 
-## Beyond Claude Code
-
-A persona is a markdown file, not a Claude Code feature. `scripts/persona-export.sh` reshapes any of them for wherever you actually work:
-
-```bash
-scripts/persona-export.sh --list                   # who's on the roster
-scripts/persona-export.sh auditor | pbcopy         # paste into Claude.ai or ChatGPT
-scripts/persona-export.sh auditor --target json    # {"system": …} for the Messages API
-scripts/persona-export.sh --all --target cursor    # → .cursor/rules/*.mdc
-scripts/persona-export.sh --all --target agents    # → AGENTS.md (Codex, Zed, Amp, …)
-```
-
-The export carries the identity, the method, the quality bar, the voice — and the degradation contract, so a persona that names a Claude Code skill it can't reach does the work by hand instead of stalling.
-
-What doesn't travel: auto-routing, stacking, and `/persona update`. Everywhere but Claude Code, you pick the expert yourself. Full trade-off table and an API example: [`docs/portability.md`](docs/portability.md).
-
----
-
 ## Build your own expert
 
 ```bash
@@ -280,7 +283,7 @@ Worth knowing before you install:
 
 * **Session rollbacks.** `/persona off` asks Claude to return to normal behavior, but the adopted instructions remain in your conversation history. For a genuinely clean slate, start a new session.
 * **Stack no more than two.** `/persona + <name>` composes experts, but past two you get context bloat and competing instructions. The engine warns you; it doesn't stop you.
-* **Claude Code is the only first-class host.** Auto-routing depends on `~/.claude/skills/`. Other CLIs work only via [export](#beyond-claude-code), and lose routing and stacking.
+* **Claude Code is the only first-class host.** Auto-routing depends on `~/.claude/skills/`. Other CLIs work only via [export](#beyond-claude-code-portability-cursor-claudeai-chatgpt), and lose routing and stacking.
 * **Personas are prompts, not guarantees.** The Auditor finds bugs far more reliably than plain Claude. It is not a static analyzer, and it does not replace one.
 * **Community personas are code you run.** `/persona remote <owner>/<slug>` fetches instructions Claude will follow. The engine shows you the name, essence, and owner and asks before adopting. The registry validates schema *shape*, not *safety* — read the thing before you say yes.
 
