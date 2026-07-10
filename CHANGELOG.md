@@ -6,6 +6,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versions fol
 
 ## [Unreleased]
 
+## [1.1.1] — 2026-07-10
+
+### Fixed
+- `docs/banner.svg` still listed the original 9 roles — The Product Manager was missing from the hero banner's roster strip.
+
+### Added
+- CI now diffs `plugin.json`'s skills array against `skills/*/SKILL.md` on disk and fails on drift in either direction — the automated guard that would have caught the 1.1.0 manifest bug. `plugin.json` added to `validate.yml`'s trigger paths so an edit to the manifest alone still runs it.
+- `templates/README.md` clarifying that folder is for persona authors, not end users.
+
 ## [1.1.0] — 2026-07-10
 
 Four more experts join the team, and the plugin manifest catches up to the actual roster.
