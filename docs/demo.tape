@@ -10,7 +10,7 @@ Set Shell "bash"
 Set FontFamily "Menlo"
 Set FontSize 22
 Set Width 1180
-Set Height 820
+Set Height 1200
 Set Padding 28
 Set Margin 26
 Set MarginFill "#161b2e"

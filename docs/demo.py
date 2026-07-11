@@ -24,27 +24,46 @@ def line(s="", pause=0.0):
         time.sleep(pause)
 
 
-# name, bullet color, one-line essence
-ROSTER = [
-    ("The Architect",  MG, "Designs systems that survive contact with reality."),
-    ("The Designer",   CY, "Understands the system before touching a pixel."),
-    ("The Shipper",    GR, "Momentum over ceremony — small, verified steps."),
-    ("The Auditor",    RD, "Assumes code is guilty until proven correct."),
-    ("The DBA",        YL, "Query plans, indexing, zero-downtime migrations."),
-    ("The Tester",     GR, "Hunts edge-cases; writes robust test suites."),
-    ("The Wordsmith",  BL, "Punchy docs, UI copy, and clean logs."),
-    ("The Researcher", CY, "Chases evidence over vibes."),
-    ("The Strategist", MG, "One decision, and a reason to believe it."),
-    ("The Product Manager", BL, "Turns a vague ask into a spec, not a wish."),
+# group label -> [(name, bullet color, one-line essence)]
+GROUPS = [
+    ("Core roles", [
+        ("The Architect",  MG, "Designs systems that survive contact with reality."),
+        ("The Designer",   CY, "Understands the system before touching a pixel."),
+        ("The Shipper",    GR, "Momentum over ceremony — small, verified steps."),
+        ("The Auditor",    RD, "Assumes code is guilty until proven correct."),
+        ("The DBA",        YL, "Query plans, indexing, zero-downtime migrations."),
+        ("The Tester",     GR, "Hunts edge-cases; writes robust test suites."),
+        ("The Wordsmith",  BL, "Punchy docs, UI copy, and clean logs."),
+        ("The Researcher", CY, "Chases evidence over vibes."),
+        ("The Strategist", MG, "One decision, and a reason to believe it."),
+        ("The Product Manager", BL, "Turns a vague ask into a spec, not a wish."),
+    ]),
+    ("Domain leads", [
+        ("The Backend Lead",  YL, "Data models, APIs, idempotency, boring reliability."),
+        ("The Frontend Lead", CY, "Component architecture, state, a11y by default."),
+        ("The Data Lead",     GR, "Pipelines, schemas, is-this-metric-even-right."),
+        ("The DevOps Lead",   RD, "Deploys, observability, the 3am-pager mindset."),
+    ]),
+    ("Specialists", [
+        ("The Growth Hacker",   GR, "The one metric that actually moves the business."),
+        ("The Copywriter",      BL, "Words that convert; cuts your draft in half."),
+        ("The Legal Reviewer",  YL, "ToS, privacy, licensing — can we ship this."),
+        ("The Interviewer",     MG, "Pressure-tests a plan until only truth survives."),
+        ("The Teacher",         CY, "Explains it so you understand, not just copy."),
+    ]),
 ]
+
+TOTAL = sum(len(members) for _, members in GROUPS)
 
 
 def show_list():
     line()
-    line(f"  {B}The roster{R} {DIM}— 10 senior specialists{R}", 0.15)
-    line()
-    for name, col, essence in ROSTER:
-        line(f"  {col}●{R}  {B}{name:<15}{R} {DIM}{essence}{R}", 0.09)
+    line(f"  {B}The roster{R} {DIM}— {TOTAL} senior specialists{R}", 0.15)
+    for label, members in GROUPS:
+        line()
+        line(f"  {DIM}{label}{R}", 0.10)
+        for name, col, essence in members:
+            line(f"  {col}●{R}  {B}{name:<20}{R} {DIM}{essence}{R}", 0.05)
     line()
 
 
