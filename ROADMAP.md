@@ -63,12 +63,14 @@ Not new experts — the roster earning the claims the README makes about it.
 
 ## Open — evaluation (the honest gap)
 
-The evidence for "a persona improves the output" is currently **one transcript**
-([`docs/before-after.md`](docs/before-after.md)) — an existence proof, not a distribution claim.
-The open work is a real evaluation: a set of tasks run default-vs-persona and scored, including
-the **counter-cases** (where a persona over-focuses, or the default is already the pragmatic
-answer). `skill-creator` already provides eval/variance tooling to build this. Until it exists,
-the README and launch copy say "inspect," "example," and "mechanism" — never "proven."
+The evidence for "a persona improves the output" is currently **three transcripts**
+([`docs/before-after.md`](docs/before-after.md)) — two showing the mechanism (The Auditor, The
+DBA) and one honest counter-case (a task with no judgment call, where the persona and default
+Claude agree) — an existence proof across a couple of roles, not a distribution claim. The open
+work is still a real evaluation: a larger set of tasks run default-vs-persona and scored,
+systematically including counter-cases rather than one hand-picked example. `skill-creator`
+already provides eval/variance tooling to build this. Until it exists, the README and launch copy
+say "inspect," "example," and "mechanism" — never "proven."
 
 ## Later — v1.5+ (open floor)
 

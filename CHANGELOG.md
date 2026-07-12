@@ -6,6 +6,20 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versions fol
 
 ## [Unreleased]
 
+### Added — Engine
+- **Mechanical pre-scan for remote installs.** `scripts/scan-persona-injection.sh` deterministically
+  checks a fetched community persona for invisible/bidi-override Unicode and known injection
+  phrasing before `/persona remote` shows the payload for consent — catches the encoding-trick
+  class of attack a visual or LLM-only read can miss on its own. Runs alongside, not instead of,
+  the existing judgment-based scan; covered by `tests/test-scan-persona-injection.sh`.
+
+### Added — Docs
+- `docs/before-after.md` gained two more cases: The DBA catching a blocking migration on a
+  multi-million-row table (a second role, a second bug class), and an honest counter-case where
+  a persona and default Claude produce the same output because the task has no judgment call to
+  make. Incremental progress on the ROADMAP's open evaluation gap — three transcripts instead of
+  one — not the full eval suite, which is still open.
+
 ## [2.0.0] — 2026-07-12
 
 Trust & rigor, not new experts: the roster earning the claims the README makes about it.

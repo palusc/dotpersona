@@ -21,7 +21,7 @@
   <p><sub>Generated automatically using <a href="docs/demo.tape">docs/demo.tape</a> and <a href="https://github.com/charmbracelet/vhs">vhs</a></sub></p>
 </div>
 
-**See it change the output, not just the tone.** [One before/after transcript](docs/before-after.md) — the same buggy transfer endpoint, default Claude vs. `/persona auditor`, side by side. Default Claude buries the double-spend race condition under logging and TypeScript nits; the Auditor ignores the nits and hands you the exact concurrent-request repro plus a scoped fix. It's a single illustrative case, not a benchmark: it shows the mechanism is real (a persona redirects Claude's attention), not that it wins every time.
+**See it change the output, not just the tone.** [Three before/after transcripts](docs/before-after.md) — the same buggy transfer endpoint (default Claude vs. `/persona auditor`), a blocking migration (default Claude vs. `/persona dba`), and a counter-case where a persona has nothing to add. Default Claude buries the double-spend race condition under logging and TypeScript nits; the Auditor ignores the nits and hands you the exact concurrent-request repro plus a scoped fix. It's a small, honestly-chosen set, not a benchmark — including the case where the persona doesn't help — showing the mechanism is real (a persona redirects Claude's attention), not that it wins every time.
 
 > [!NOTE]
 > **TL;DR:** Persona packages senior developer mindsets (Architect, Auditor, DBA, etc.) into schema-validated markdown experts. It auto-routes the right specialist to your Claude Code workspace or exports them directly to Cursor (`.mdc`), Claude.ai, or `AGENTS.md`. No manual prompt copy-pasting, no bloated `CLAUDE.md`.
@@ -93,7 +93,8 @@ What doesn't travel: auto-routing, stacking, and `/persona update`. Everywhere b
 
 ## The Difference, In One Case
 
-Same buggy code, two runs — one illustrative case, not a benchmark. [Full transcript & rationale →](docs/before-after.md)
+Same buggy code, two runs — one of three cases, not a benchmark (the other two: a blocking
+migration, and a counter-case where the persona has nothing to add). [Full transcripts & rationale →](docs/before-after.md)
 
 ```javascript
 app.post('/transfer', async (req, res) => {
@@ -295,7 +296,7 @@ Worth knowing before you install:
 * **Stack no more than two.** `/persona + <name>` composes experts, but past two you get context bloat and competing instructions. The engine warns you; it doesn't stop you.
 * **Claude Code is the only first-class host.** Auto-routing depends on `~/.claude/skills/`. Other CLIs work only via [export](#beyond-claude-code-portability-cursor-claudeai-chatgpt), and lose routing, stacking, and native tools — so verification-first personas degrade most ([details](docs/portability.md#what-you-lose)).
 * **Personas redirect attention; they don't cure hallucination.** A persona makes Claude *look* in the right place — the Auditor hunts the race condition instead of the missing semicolon — but it's still the same model underneath. The Auditor's discipline is to label a finding CONFIRMED only after it actually *ran* the repro, PLAUSIBLE otherwise; treat a PLAUSIBLE finding as a lead to verify, not a fact. It is not a static analyzer and does not replace one.
-* **Community personas are code you run.** `/persona remote <owner>/<slug>` fetches instructions Claude will follow with your tools. Before adopting, the engine now shows you the persona's actual `Operating Principles` and `Method` — not just its name — and flags instruction-injection or out-of-role actions (delete, exfiltrate, "ignore previous instructions") for you to veto. The registry validates schema *shape*, not *safety* — read the thing before you say yes.
+* **Community personas are code you run.** `/persona remote <owner>/<slug>` fetches instructions Claude will follow with your tools. Before adopting, the engine now shows you the persona's actual `Operating Principles` and `Method` — not just its name — runs a deterministic pre-scan (`scripts/scan-persona-injection.sh`) for invisible/bidi-override Unicode and known injection phrasing, then flags instruction-injection or out-of-role actions (delete, exfiltrate, "ignore previous instructions") in its own judgment for you to veto. Neither layer is a safety guarantee — the mechanical scan catches one obfuscation class, the judgment pass can still miss a sufficiently novel attack. The registry validates schema *shape*, not *safety* — read the thing before you say yes.
 
 ---
 
