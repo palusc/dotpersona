@@ -1,6 +1,12 @@
 # Validation Transcript — Default Claude vs. `/persona auditor`
 
-To demonstrate that a persona changes **how Claude decides and what it refuses to ship**, this transcript compares default Claude against `/persona auditor` when auditing the same buggy code snippet.
+This is **one illustrative case, not a benchmark.** It shows the *mechanism* is real — a persona
+changes **how Claude decides and what it refuses to ship** — on a single, honestly chosen example.
+It does not claim the Auditor wins every time; a fair evaluation across many cases (and the
+counter-cases where a persona over-focuses or the default is already fine) is still open work,
+tracked in [`ROADMAP.md`](../ROADMAP.md). Read this as an existence proof, not a distribution claim.
+
+Below, default Claude is compared against `/persona auditor` auditing the same buggy code snippet.
 
 ## The Buggy Code
 

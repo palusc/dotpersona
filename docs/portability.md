@@ -105,11 +105,20 @@ Be honest about the trade. Exported personas are a **prompt**, not an engine.
 | **Auto-routing** | Picks the expert from your open files and git diff | You pick |
 | **Stacking** | `/persona + auditor` consults a second expert | One at a time |
 | **Skill orchestration** | Calls `code-review`, `security-review`, … | Falls back to the embedded method |
+| **Native tools** | Reads files, greps, runs the repro/test, verifies end-to-end | Describes what to run; you run it |
 | **Switching** | `/persona off`, `/persona dba` mid-session | New conversation |
 | **Updates** | `/persona update` | Re-run the export |
 
 The mindset, the method, the quality bar, and the voice — the parts that actually change the
-output — come along intact. That's the 80%.
+output — come along intact. **How much that's worth depends on the persona.** A judgment-first
+role (The Strategist, The Product Manager, The Copywriter) exports at near-full strength: its
+value is the thinking, and the thinking is text. A verification-first role (The Auditor, The
+Tester, The Shipper, The DevOps Lead) loses the most: its method *depends* on running things —
+executing a repro, tabbing through for accessibility, watching a deploy's health — and an
+exported prompt can't run anything. In another tool it will hand you the exact test to run or
+the exact request to fire, but you execute it, and its findings are PLAUSIBLE-until-you-run-them
+rather than CONFIRMED. That's real degradation, not a rounding error — reach for the export when
+you want the *judgment* travelled, and stay in Claude Code when you want the *verification* done.
 
 ---
 

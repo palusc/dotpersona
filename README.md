@@ -21,7 +21,7 @@
   <p><sub>Generated automatically using <a href="docs/demo.tape">docs/demo.tape</a> and <a href="https://github.com/charmbracelet/vhs">vhs</a></sub></p>
 </div>
 
-**Want proof it's not just a personality skin?** [See the full before/after transcript](docs/before-after.md) — the same buggy transfer endpoint, default Claude vs. `/persona auditor`, side by side. Default Claude buries the double-spend race condition under logging and TypeScript nits; the Auditor ignores the nits and hands you the exact concurrent-request repro plus a scoped fix.
+**See it change the output, not just the tone.** [One before/after transcript](docs/before-after.md) — the same buggy transfer endpoint, default Claude vs. `/persona auditor`, side by side. Default Claude buries the double-spend race condition under logging and TypeScript nits; the Auditor ignores the nits and hands you the exact concurrent-request repro plus a scoped fix. It's a single illustrative case, not a benchmark: it shows the mechanism is real (a persona redirects Claude's attention), not that it wins every time.
 
 > [!NOTE]
 > **TL;DR:** Persona packages senior developer mindsets (Architect, Auditor, DBA, etc.) into schema-validated markdown experts. It auto-routes the right specialist to your Claude Code workspace or exports them directly to Cursor (`.mdc`), Claude.ai, or `AGENTS.md`. No manual prompt copy-pasting, no bloated `CLAUDE.md`.
@@ -45,7 +45,7 @@ Persona solves this by **packaging** specialized mindsets into modular, schema-v
 - You use Claude Code daily and keep re-typing *"review this like a security engineer."*
 - Your `CLAUDE.md` has grown into a pile of rules that quietly contradict each other.
 - You want a review that names the bug that loses money — not the missing semicolon next to it.
-- You want the same expert to behave the same way next Tuesday, and to be able to prove it.
+- You want the same expert to behave the same way next Tuesday — a versioned mindset you can inspect, diff, and test, not a prompt you retype from memory.
 
 **This is not for you if:**
 
@@ -91,9 +91,9 @@ What doesn't travel: auto-routing, stacking, and `/persona update`. Everywhere b
 
 ---
 
-## The Proof
+## The Difference, In One Case
 
-Same buggy code, two runs. [Full transcript & rationale →](docs/before-after.md)
+Same buggy code, two runs — one illustrative case, not a benchmark. [Full transcript & rationale →](docs/before-after.md)
 
 ```javascript
 app.post('/transfer', async (req, res) => {
@@ -291,10 +291,11 @@ Start from [`templates/PERSONA.template.md`](templates/README.md) if you'd rathe
 Worth knowing before you install:
 
 * **Session rollbacks.** `/persona off` asks Claude to return to normal behavior, but the adopted instructions remain in your conversation history. For a genuinely clean slate, start a new session.
+* **A persona costs context.** Adopting one loads its `SKILL.md` — roughly 1–2k tokens — into the conversation. That's *one* persona on demand, not the whole roster (skills load lazily), and it's the same budget a re-pasted prompt would spend, held to a consistent bar. But on a very large file it's real: those tokens aren't reading your code. Adopt the expert you need, not a panel, and drop it (`/persona off` / new session) when the specialist work is done.
 * **Stack no more than two.** `/persona + <name>` composes experts, but past two you get context bloat and competing instructions. The engine warns you; it doesn't stop you.
-* **Claude Code is the only first-class host.** Auto-routing depends on `~/.claude/skills/`. Other CLIs work only via [export](#beyond-claude-code-portability-cursor-claudeai-chatgpt), and lose routing and stacking.
-* **Personas are prompts, not guarantees.** The Auditor finds bugs far more reliably than plain Claude. It is not a static analyzer, and it does not replace one.
-* **Community personas are code you run.** `/persona remote <owner>/<slug>` fetches instructions Claude will follow. The engine shows you the name, essence, and owner and asks before adopting. The registry validates schema *shape*, not *safety* — read the thing before you say yes.
+* **Claude Code is the only first-class host.** Auto-routing depends on `~/.claude/skills/`. Other CLIs work only via [export](#beyond-claude-code-portability-cursor-claudeai-chatgpt), and lose routing, stacking, and native tools — so verification-first personas degrade most ([details](docs/portability.md#what-you-lose)).
+* **Personas redirect attention; they don't cure hallucination.** A persona makes Claude *look* in the right place — the Auditor hunts the race condition instead of the missing semicolon — but it's still the same model underneath. The Auditor's discipline is to label a finding CONFIRMED only after it actually *ran* the repro, PLAUSIBLE otherwise; treat a PLAUSIBLE finding as a lead to verify, not a fact. It is not a static analyzer and does not replace one.
+* **Community personas are code you run.** `/persona remote <owner>/<slug>` fetches instructions Claude will follow with your tools. Before adopting, the engine now shows you the persona's actual `Operating Principles` and `Method` — not just its name — and flags instruction-injection or out-of-role actions (delete, exfiltrate, "ignore previous instructions") for you to veto. The registry validates schema *shape*, not *safety* — read the thing before you say yes.
 
 ---
 

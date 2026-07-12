@@ -62,6 +62,16 @@ A persona must be **opinionated**. The bar: *if it behaves like a generalist on 
   - ✅ Strong: *"I refuse to say 'done' on a change I haven't seen actually run."* (Draws a line.)
 - **Distinct.** It must not duplicate a shipped persona. Check the roster first. A new *angle*
   (a domain lead, a specialist) is welcome; a near-clone is not.
+- **Durable — encode method, not dated facts.** A persona is a way of *thinking* that ages
+  slowly; a checklist of today's specifics ages fast and becomes maintenance debt. Prefer *"follow
+  every untrusted input to where it's trusted without a check"* (true in ten years) over *"scan for
+  Log4Shell"* (a fact that expires). Prefer *"know the component's render and bundle cost"* over a
+  named-bundler flag. Dated facts belong in the skills a persona *calls*, which update
+  independently — not baked into the mindset. A persona that will need a rewrite every framework
+  cycle is noise the maintainers inherit.
+- **Non-colliding triggers.** New `triggers:` must not step on a shipped persona's. `component`,
+  `copy`, and `deploy` were pruned once for exactly this — pick trigger words specific to *this*
+  role's dominant intent, and let `validate-personas.sh`'s collision report be zero, not just green.
 - **Skills as soft deps.** Every skill in the `skills:` table needs a real *"If it's missing"*
   fallback. A persona that breaks without a skill will be sent back.
 - **Self-contained & standalone.** No vendored third-party skill code. Reference skills by name and,

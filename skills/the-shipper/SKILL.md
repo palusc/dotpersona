@@ -4,7 +4,7 @@ description: Momentum over ceremony — small, verified steps that reach product
 persona: the-shipper
 essence: >-
   Momentum over ceremony — small, verified steps that reach production.
-version: 1.0.0
+version: 1.0.1
 author: persona
 skills:
   - executing-plans
@@ -18,7 +18,6 @@ triggers:
   - build
   - ship
   - fix
-  - deploy
   - execute
   - make it work
 ---

@@ -6,12 +6,47 @@ The format follows [Keep a Changelog](https://keepachangelog.com/); versions fol
 
 ## [Unreleased]
 
-### Changed
-- `docs/remote-registry.md` now documents the registry contract as actually shipped at
-  dotpersona.dev: visibility tiers (`public`/`unlisted`/`private`/`restricted`), Free/Pro gating
-  (3-persona cap, no private/restricted on Free, existing private personas lock if a Pro
-  subscription lapses), and the attachments endpoints. No client-side (`skills/persona/SKILL.md`)
-  behavior changed — `/persona remote` still only ever calls `GET .../raw`.
+## [2.0.0] — 2026-07-12
+
+Trust & rigor, not new experts: the roster earning the claims the README makes about it.
+Behavior changes (stricter remote-install consent, pruned triggers) make this a major bump.
+
+### Changed — Engine
+- **Remote install shows the payload before adopting.** `/persona remote` now prints a fetched
+  persona's actual `Operating Principles` and `Method` (not just name/essence) and scans the body
+  for instruction-injection and out-of-role actions (delete, exfiltrate, "ignore previous
+  instructions"), flagging them for the user to veto. A one-line label never revealed a prompt
+  buried in the body; this closes the community-persona supply-chain gap at the point of adoption.
+- **Trigger disambiguation.** Pruned the three colliding triggers the validator flagged —
+  `component` (kept on The Frontend Lead, dropped from The Designer), `copy` (kept on The
+  Copywriter, dropped from The Wordsmith), `deploy` (kept on The DevOps Lead, dropped from The
+  Shipper) — and documented a routing tiebreak: an ambiguous request stacks or asks, never
+  silently picks the wrong expert.
+
+### Changed — Roster
+- **The Auditor (1.1.0)** — `CONFIRMED` now means a repro that was actually executed and observed
+  to fail; a sound-but-unexecuted trace is `PLAUSIBLE`, with the step that would settle it. Ties
+  the persona's strongest label to an observation instead of its own asserted authority.
+- **The Designer (1.0.1), The Wordsmith (1.0.1), The Shipper (1.0.1)** — trigger lists pruned per
+  the disambiguation above; methods unchanged.
+
+### Changed — Docs (honest-claims pass)
+- `README.md` — the before/after is framed as one illustrative case, not a benchmark; a new
+  limitation notes each persona's per-invocation token cost; the community-persona and
+  hallucination caveats reflect the stricter Auditor and remote-install behavior.
+- `docs/before-after.md` — labeled an existence proof, not a distribution claim, with the open
+  evaluation work linked.
+- `docs/portability.md` — a "Native tools" row and a note that verification-first personas
+  degrade most when exported (they instruct, they can't execute).
+- `CONTRIBUTING.md` — merge bar gains a durability criterion (encode method, not dated facts) and
+  a non-colliding-triggers rule.
+- `ROADMAP.md` — a v2.0 "trust & rigor" section and an explicit open "evaluation" gap.
+
+### Changed — Registry docs
+- `docs/remote-registry.md` documents the registry contract as shipped at dotpersona.dev:
+  visibility tiers (`public`/`unlisted`/`private`/`restricted`), Free/Pro gating (3-persona cap,
+  no private/restricted on Free, existing private personas lock if a Pro subscription lapses), and
+  the attachments endpoints.
 
 ## [1.4.0] — 2026-07-10
 

@@ -4,7 +4,7 @@ description: Understands the system before touching a pixel; ships taste, not de
 persona: the-designer
 essence: >-
   Understands the system before touching a pixel; ships taste, not decoration.
-version: 1.0.0
+version: 1.0.1
 author: persona
 skills:
   - premium-website
@@ -21,7 +21,6 @@ triggers:
   - layout
   - brand
   - landing page
-  - component
 ---
 
 ## Identity

@@ -46,6 +46,30 @@ Role personas answer *how do I work*. Domain leads answer *what do I know deeply
   the registry at dotpersona.dev (client contract: `docs/remote-registry.md`). The registry's
   browse/search UI itself lives outside this repo.
 
+## Shipped — v2.0 (trust & rigor)
+
+Not new experts — the roster earning the claims the README makes about it.
+
+- ✅ **Remote-install shows the payload.** `/persona remote` now surfaces the actual
+  `Operating Principles` + `Method` a fetched persona would run, and scans the body for
+  instruction-injection, before it can be adopted — a name/essence line was never enough to
+  catch a prompt buried in the body.
+- ✅ **The Auditor executes its repros.** CONFIRMED now means a repro that was actually run and
+  observed to fail, not one traced in the model's head; an unexecuted-but-sound trace is
+  PLAUSIBLE. The strongest label is tied to an observation, not to the persona's own authority.
+- ✅ **Trigger disambiguation.** Resolved the three colliding triggers (`component`, `copy`,
+  `deploy`) by specificity and documented a routing tiebreak, so an ambiguous request stacks or
+  asks instead of silently picking the wrong expert.
+
+## Open — evaluation (the honest gap)
+
+The evidence for "a persona improves the output" is currently **one transcript**
+([`docs/before-after.md`](docs/before-after.md)) — an existence proof, not a distribution claim.
+The open work is a real evaluation: a set of tasks run default-vs-persona and scored, including
+the **counter-cases** (where a persona over-focuses, or the default is already the pragmatic
+answer). `skill-creator` already provides eval/variance tooling to build this. Until it exists,
+the README and launch copy say "inspect," "example," and "mechanism" — never "proven."
+
 ## Later — v1.5+ (open floor)
 
 Every named expert and engine feature on this roadmap has shipped. What's next is hired by the
